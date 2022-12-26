@@ -1,0 +1,11 @@
+/*.iml
+/.gradle
+/.idea
+/build
+/api/build
+/classes
+/rest-test
+/KahaDB
+/out
+/logback.groovy
+/cache
