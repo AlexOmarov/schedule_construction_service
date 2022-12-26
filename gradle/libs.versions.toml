@@ -10,6 +10,9 @@ spring-boot-dm="1.1.0"
 # OpenApi
 openapi="1.6.14"
 
+# DB
+r2dbc_postgres="0.8.13.RELEASE"
+
 # Swagger
 swagger="2.2.7"
 
@@ -24,6 +27,12 @@ junit="5.9.0"
 # Spring
 spring-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
 spring-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-starter-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc" }
+
+# DB
+flyway = { module = "org.flywaydb:flyway-core" }
+postgres = { module = "org.postgresql:postgresql" }
+postgres-r2dbc = { module = "io.r2dbc:r2dbc-postgresql", version.ref = "r2dbc_postgres" }
 
 # OpenApi
 openapi-webflux-ui = { module = "org.springdoc:springdoc-openapi-webflux-ui", version.ref = "openapi" }
