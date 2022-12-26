@@ -1,8 +1,9 @@
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    kotlin("jvm") version "1.7.21"
-    id("org.springframework.boot") version "2.7.7"
-    id("io.spring.dependency-management") version "1.1.0"
-    kotlin("plugin.spring") version "1.7.21"
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.boot.dm)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.spring)
     application
 }
 
@@ -10,10 +11,16 @@ tasks.test { useJUnitPlatform() }
 
 dependencies {
     implementation(project(":schedule_constructor_api"))
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+
+    implementation(libs.spring.starter.webflux)
+    implementation(libs.spring.starter.validation)
+
+    implementation(libs.openapi.webflux.ui)
+    implementation(libs.openapi.security)
+    implementation(libs.openapi.kotlin)
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.junit.engine)
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
