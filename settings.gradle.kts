@@ -1,4 +1,9 @@
 rootProject.name = "schedule_constructor_service"
 
-include("schedule_constructor_app")
-include("schedule_constructor_api")
+include("schedule_constructor_app", "schedule_constructor_api")
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
