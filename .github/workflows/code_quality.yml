@@ -39,7 +39,4 @@ jobs:
 
       - name: Scan
         run: |
-          ./gradlew sonarqube
-        env:
-          sonar.host.url: 'https://sonarcloud.io'
-          sonar.login: ${{ secrets.SONAR_TOKEN }}
+          ./gradlew sonarqube -D"sonar.host.url"="https://sonarcloud.io" -D"sonar.login"=${{ secrets.SONAR_TOKEN }}
