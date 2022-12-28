@@ -7,6 +7,9 @@ database:
   password: 'schedule_construction_service'
 
 management:
+  health:
+    r2dbc:
+      enabled: false
   endpoints:
     web:
       exposure:
