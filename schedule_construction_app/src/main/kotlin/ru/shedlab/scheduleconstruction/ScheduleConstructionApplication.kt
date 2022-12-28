@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class ScheduleConstructionApp
+class ScheduleConstructionApplication
 
 fun main(args: Array<String>) {
-    runApplication<ScheduleConstructionApp>(*args)
+    runApplication<ScheduleConstructionApplication>(*args)
 }
