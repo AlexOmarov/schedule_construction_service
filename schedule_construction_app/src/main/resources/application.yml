@@ -6,6 +6,16 @@ database:
   user: 'schedule_construction_service'
   password: 'schedule_construction_service'
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
 spring:
   r2dbc:
     url: 'r2dbc:postgresql://${database.host}:${database.port}/${database.name}?schema=${database.schema}'

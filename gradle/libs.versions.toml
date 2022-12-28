@@ -64,6 +64,7 @@ ehcache = { module="org.ehcache:ehcache", version.ref="ehcache" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 awaitility = { module = "org.awaitility:awaitility-kotlin", version.ref = "awaitility" }
 reactor-test = { module = "io.projectreactor:reactor-test" }

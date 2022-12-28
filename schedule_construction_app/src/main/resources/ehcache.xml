@@ -6,5 +6,9 @@
         <ehcache:expiry>
             <ehcache:tti unit="minutes">1</ehcache:tti>
         </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap>200</ehcache:heap>
+        </ehcache:resources>
     </ehcache:cache>
+
 </ehcache:config>

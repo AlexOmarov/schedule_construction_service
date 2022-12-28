@@ -43,6 +43,7 @@ dependencies {
     testImplementation(libs.reactor.test)
     testImplementation(libs.awaitility)
     testImplementation(libs.testcontainers.junit)
+    testImplementation(libs.testcontainers.postgres)
     testImplementation(libs.spring.starter.test)
     testRuntimeOnly(libs.junit.engine)
 }
