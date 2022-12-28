@@ -16,7 +16,10 @@ r2dbc_postgres="0.8.13.RELEASE"
 # Swagger
 swagger="2.2.7"
 
-# Junit
+# Publication
+sonarqube = "3.3"
+
+# Tests
 junit="5.9.0"
 # -------------------------- Versions ----------------------------
 
@@ -54,4 +57,5 @@ spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-boot-dm = { id = "io.spring.dependency-management", version.ref = "spring-boot-dm" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotiln" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotiln" }
+sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 # --------------------------- Plugins ----------------------------

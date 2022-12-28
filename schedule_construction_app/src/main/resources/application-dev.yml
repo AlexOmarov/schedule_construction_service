@@ -1,0 +1,6 @@
+database:
+  host: 'localhost'
+  port: '7003'
+
+server:
+  port: 11000

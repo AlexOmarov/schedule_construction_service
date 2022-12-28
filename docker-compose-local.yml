@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  schedule_construction_service:
+    build: .
+    container_name: schedule_construction_service
+    env_file:
+      - ./src/main/resources/application-dev.yml
+    ports:
+      - "11000:11000"

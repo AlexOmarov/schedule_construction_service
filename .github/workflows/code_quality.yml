@@ -1,0 +1,44 @@
+name: "Code quality workflow"
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+
+permissions: read-all
+
+concurrency:
+  group: code_quality
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+    working-directory: .
+
+jobs:
+  code_quality:
+    name: "Code quality"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Test
+        run: |
+          
+
+      - name: Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

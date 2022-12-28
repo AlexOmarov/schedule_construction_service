@@ -1,6 +1,6 @@
 database:
   host: 'localhost'
-  port: '7003'
+  port: '5432'
   name: 'schedule_construction_service'
   schema: 'schedule_construction_service'
   user: 'schedule_construction_service'
@@ -21,3 +21,6 @@ spring:
 springdoc:
   webjars:
     prefix: ''
+
+server:
+  port: 11000
