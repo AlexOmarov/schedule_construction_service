@@ -38,7 +38,8 @@ jobs:
           ./gradlew test jacocoTestReport coverage
 
       - name: Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        run: |
+          ./gradlew sonarqube
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          sonar.host.url: 'https://sonarcloud.io'
+          sonar.login: ${{ secrets.SONAR_TOKEN }}
