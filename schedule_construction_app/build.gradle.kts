@@ -23,6 +23,12 @@ dependencies {
     implementation(libs.spring.starter.webflux)
     implementation(libs.spring.starter.r2dbc)
     implementation(libs.spring.starter.validation)
+    implementation(libs.spring.starter.cache)
+    implementation(libs.spring.starter.sleuth)
+    implementation(libs.spring.starter.actuator)
+
+    implementation(libs.ehcache)
+    implementation(libs.micrometr)
 
     implementation(libs.openapi.webflux.ui)
     implementation(libs.openapi.security)
@@ -33,6 +39,7 @@ dependencies {
     runtimeOnly(libs.postgres.r2dbc)
 
     testImplementation(libs.junit.api)
+    testImplementation(libs.spring.starter.test)
     testRuntimeOnly(libs.junit.engine)
 }
 

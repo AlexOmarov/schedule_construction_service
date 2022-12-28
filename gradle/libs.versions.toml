@@ -3,9 +3,13 @@
 # Kotlin
 kotiln="1.7.21"
 
+# Cache
+ehcache="3.10.8"
+
 # Spring
 spring-boot="2.7.7"
 spring-boot-dm="1.1.0"
+spring-cloud="3.1.5"
 
 # OpenApi
 openapi="1.6.14"
@@ -30,7 +34,14 @@ junit="5.9.0"
 # Spring
 spring-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
 spring-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
 spring-starter-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc" }
+spring-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-starter-sleuth = { module = "org.springframework.cloud:spring-cloud-sleuth-zipkin", version.ref="spring-cloud" }
+spring-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+
+# Metrics
+micrometr = { module = "io.micrometer:micrometer-registry-prometheus" }
 
 # DB
 flyway = { module = "org.flywaydb:flyway-core" }
@@ -42,6 +53,9 @@ openapi-webflux-ui = { module = "org.springdoc:springdoc-openapi-webflux-ui", ve
 openapi-kotlin = { module = "org.springdoc:springdoc-openapi-kotlin", version.ref = "openapi" }
 openapi-security = { module = "org.springdoc:springdoc-openapi-security", version.ref = "openapi" }
 swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger" }
+
+# Cache
+ehcache = { module="org.ehcache:ehcache", version.ref="ehcache" }
 
 # Junit
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
