@@ -17,10 +17,19 @@ spring:
     user: '${spring.r2dbc.username}'
     password: '${spring.r2dbc.password}'
     default-schema: '${database.schema}'
+  cache:
+    jcache:
+      config: 'classpath:ehcache.xml'
+  sleuth:
+    web:
+      enabled: true
 
 springdoc:
   webjars:
     prefix: ''
+
+logging:
+  config: classpath:logback/logback-spring.xml
 
 messages:
   encoding: 'UTF-8'

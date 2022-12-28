@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <appender name="JSON_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <pattern>yyyy-MM-dd' 'HH:mm:ss.SSS</pattern>
+                    <fieldName>localTime</fieldName>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <omitEmptyFields>false</omitEmptyFields>
+                    <pattern>
+                        {
+                        "level": "%level",
+                        "message": "%message",
+                        "traceId": "%X{traceId}",
+                        "loggerName": "%logger",
+                        "threadName": "%thread"
+                        <!--                        "event":"E"-->
+                        }
+                    </pattern>
+                </pattern>
+
+                <logLevelValue>
+                    <fieldName>levelInt</fieldName>
+                </logLevelValue>
+                <arguments>
+                    <includeNonStructuredArguments>false</includeNonStructuredArguments>
+                </arguments>
+                <stackTrace>
+                    <fieldName>stack</fieldName>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="JSON_APPENDER"/>
+    </root>
+</included>
