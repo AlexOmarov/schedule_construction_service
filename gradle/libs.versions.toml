@@ -25,6 +25,9 @@ sonarqube = "3.3"
 
 # Tests
 junit="5.9.0"
+testcontainers="1.17.6"
+mockito="4.1.0"
+awaitility="4.2.0"
 # -------------------------- Versions ----------------------------
 
 
@@ -57,9 +60,13 @@ swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", versi
 # Cache
 ehcache = { module="org.ehcache:ehcache", version.ref="ehcache" }
 
-# Junit
+# Tests
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
+awaitility = { module = "org.awaitility:awaitility-kotlin", version.ref = "awaitility" }
+reactor-test = { module = "io.projectreactor:reactor-test" }
 
 # -------------------------- Libraries ---------------------------
 

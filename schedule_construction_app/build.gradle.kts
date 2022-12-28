@@ -39,6 +39,10 @@ dependencies {
     runtimeOnly(libs.postgres.r2dbc)
 
     testImplementation(libs.junit.api)
+    testImplementation(libs.mockito)
+    testImplementation(libs.reactor.test)
+    testImplementation(libs.awaitility)
+    testImplementation(libs.testcontainers.junit)
     testImplementation(libs.spring.starter.test)
     testRuntimeOnly(libs.junit.engine)
 }
