@@ -65,5 +65,5 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
-            sudo docker-compose -f ~/docker-compose-ml-snippets-service.yml up -d --force-recreate
+            sudo docker-compose -f ~/docker-compose-schedule_construction_service.yml up -d --force-recreate
             docker system prune
