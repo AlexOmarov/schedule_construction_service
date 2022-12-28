@@ -22,5 +22,9 @@ springdoc:
   webjars:
     prefix: ''
 
+messages:
+  encoding: 'UTF-8'
+  basename: 'classpath:messages/messages'
+
 server:
   port: 11000
