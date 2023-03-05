@@ -4,3 +4,9 @@ database:
 
 server:
   port: 11000
+
+yandex:
+  speech:
+    iam: 't1.9euelZrKx82NlZiak4rKnJzJk8aQmu3rnpWazszMlouTnsqJmpCXy8iQzMnl9PctaHFf-e8yW3ad3fT3bRZvX_nvMlt2nQ.bVHtk0SRbrixBsxY7wA_-f0C7WzaFvduZNyg7AFdYGBxAPibIGUvbbiXvQ74sf7rbehcN3_st5PST8Xpe9i-AA'
+    folder: 'b1ge8eo8ldn824gqiqcl'
+    url: "tts.api.cloud.yandex.net/speech/v1/tts:synthesize"
