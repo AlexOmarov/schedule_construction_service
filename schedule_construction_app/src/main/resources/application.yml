@@ -1,28 +1,75 @@
 database:
-  host: 'localhost'
-  port: '5432'
-  name: 'schedule_construction_service'
-  schema: 'schedule_construction_service'
-  user: 'schedule_construction_service'
-  password: 'schedule_construction_service'
+  host: ${DB_HOST:localhost}
+  port: ${DB_PORT:5432}
+  name: ${DB_NAME:schedule_construction_service}
+  schema: ${DB_SСHEMA:public}
+  user: ${DB_USER:schedule_construction_service}
+  password: ${DB_PASSWORD:schedule_construction_service}
+
+app:
+  grpc-port: ${GRPC_PORT:9090}
+  http-port: ${HTTP_PORT:8080}
+  grpc-clients:
+    other-service-host: ${OTHER_SERVICE_HOST:localhost:9090}
+  kafka:
+    brokers: ${KAFKA_BROKERS:localhost:9092}
+    stub-topic: ${KAFKA_STUB_TOPIC:stub}
+    dlt-topic: ${KAFKA_DLT_TOPIC:schedule_construction_service_dlt}
+  scheduler:
+    enabled: ${SCHEDULING_ENABLED:true}
+    thread-pool-size: ${SCHEDULING_THREAD_POOL_SIZE:2} # increase if new scheds are coming to not make race conditions
+    min-lock: ${SCHEDULING_DEFAULT_MIN_LOCK:0}
+    max-lock: ${SCHEDULING_DEFAULT_MAX_LOCK:1h}
+    stub-scheduler:
+      enabled: ${SCHEDULING_STUB_ENABLED:true}
+      delay: ${SCHEDULING_STUB_DELAY:PT50S}
+      batch-size: ${SCHEDULING_STUB_BATCH_SIZE:10}
+      lock-max-duration: ${SCHEDULING_STUB_MAX_LOCK:PT1H}
+
+cache:
+  default-time: 5m
+  default-heap-size: 200
 
 management:
   health:
+    readinessState:
+      enabled: true
+    livenessState:
+      enabled: true
     r2dbc:
       enabled: false
   endpoints:
     web:
       exposure:
-        include: health,prometheus
+        include: health,prometheus,info
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: database, kafkaReactiveReceivers, grpcChannel
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+        add-additional-paths: true
   metrics:
     export:
       prometheus:
         enabled: true
-  endpoint:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
     health:
       show-details: always
+  tracing:
+    sampling:
+      probability: 1.0
 
 spring:
+  main:
+    banner-mode: off
   r2dbc:
     url: 'r2dbc:postgresql://${database.host}:${database.port}/${database.name}?schema=${database.schema}'
     username: '${database.user}'
@@ -33,16 +80,39 @@ spring:
     user: '${spring.r2dbc.username}'
     password: '${spring.r2dbc.password}'
     default-schema: '${database.schema}'
-  cache:
-    jcache:
-      config: 'classpath:ehcache.xml'
-  sleuth:
-    web:
-      enabled: true
+  application:
+    name: 'schedule_construction_service'
 
-springdoc:
-  webjars:
-    prefix: ''
+grpc:
+  server:
+    port: '${app.grpc-port}'
+    permitKeepAliveTime: 2m
+  client:
+    other-service:
+      address: '${app.grpc-clients.other-service-host}'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      setKeepAliveTime: 6m
+      negotiationType: plaintext
+
+kafka:
+  consuming-enabled: true
+  dlt-enabled: true
+  sender:
+    max-in-flight: 512
+  retry-attempts: 10
+  retry-period-seconds: 2
+  retry-jitter: 0.75
+  offset-reset-config: 'earliest'
+  brokers: '${app.kafka.brokers}'
+  group-id: 'cpa-conversions-service'
+  stub-topic: '${app.kafka.stub-topic}'
+  dlt-topic: '${app.kafka.dlt-topic}'
+  stub-consuming-enabled: true
+  max-poll-records: 5
+  commit-interval: 5 # in seconds
+  dlt-handling-interval: 10 # in seconds
+  dlt-resend-number: 3
 
 logging:
   config: classpath:logback/logback-spring.xml
@@ -52,4 +122,4 @@ messages:
   basename: 'classpath:messages/messages'
 
 server:
-  port: 11000
+  port: '${app.http-port}'

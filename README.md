@@ -37,19 +37,68 @@ There you can find:
 ## Features
  * Forming schedule for set of classes
 
-## Requirements
+## Развертка
 
-The application can be run locally or in a docker container, 
-the requirements for each setup are listed below.
-
-### Local
-
+Сервис может разворачиваться как в докере, так и локально. Для развертки необходимо
+использовать инструменты указанных ниже версий:
 * [Java 17 SDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-* [Gradle >= 7](https://gradle.org/install/)
+* [Gradle >= 8](https://gradle.org/install/)
 
-### Docker
+Сервис использует в своей работе несколько сторонних систем:
+- Postgres база (v. 15 и выше). Стандартные конфиги (с именами системных переменных):
+    - host: ${POSTGRES_HOST:localhost}
+    - port: ${POSTGRES_PORT:5432}
+    - name: ${POSTGRES_DATABASE:schedule_construction_service}
+    - schema: ${POSTGRES_DATABASE_SСHEMA:public}
+    - user: ${POSTGRES_USER_NAME:schedule_construction_service}
+    - password: ${POSTGRES_PASSWORD:schedule_construction_service}
+- Kafka (проверено с confluent платформой версии 7.3, kafka версии 3.3). Стандартные конфиги (с именами системных переменных):
+    - brokers: ${KAFKA_BROKERS:localhost:9092}
+    - conversion-update-topic: ${CONVERSION_UPDATE_TOPIC:conversion_update}
+- Другие системы. Стандартные конфиги (с именами системных переменных):
+    - other-service-host: ${OTHER_SERVICE_HOST:localhost:9090}
+  
+В стандартной конфигурации сервис держит открытым для http соединений порт 8080 и порт 9090 для grpc соединений.
+Настройку можно изменить, добавив `GRPC_PORT` и `HTTP_PORT` системные переменные.
 
-* [Docker](https://www.docker.com/get-docker)
+При развертке на прод контуре должно быть развернуто не менее двух экземпляров сервиса, и CONVERSION_UPDATE_TOPIC
+очередь должна иметь не менее двух партиций. Время жизни сообщений - два месяца или более.
+
+`Liveness` и `readiness` API доступны по `actuator/health/liveness` и `actuator/health/readiness` путям.  
+Уровень логирования можно менять через системную переменную `logging.level.root` (info, debug, etc.).
+Если нет необходимости смотреть ВСЕ debug логи, можно ограничить debug уровень конкретными пакетами,
+установив переменную `logging.level.<PACKAGE_TO_LOG>`.
+
+Метрики для Prometheus доступны по адресу `actuator/prometheus`.
+
+### Локальная развертка
+
+Необходимо установить системную переменную spring.profiles.active=dev.
+Приложение будет доступно по `11000` порту (http) и `12000` порту (grpc)
+
+Можно разворачивать либо конфигурацией из IntellijIDEA, либо вручную командой в терминале
+```bash
+$ .\gradlew bootRun --args='--spring.profiles.active=dev'
+```
+
+#### Локальный Docker
+
+Необходимо использовать `docker-compose-local.yml` чтобы собрать образ и стартовать контейнер.
+В стандартной конфигурации сервис будет использовать `application-dev.yml` файл свойств.
+
+
+## Публикация
+
+Для каждой новой версии сервиса (можно завязать выкат на релиз, можно ка каждый коммит в мастер и т.д.)
+необходимо проводить публикацию API модуля в репозитории пакетов maven.
+Для этого используется задача publish
+```
+.\gradlew publish
+```
+Для ее корректной работы необходимо указать несколько системных переменных:
+- CI_ARTIFACT_REPO_HOST - хост nexus репозитория
+- CI_ARTIFACT_REPO_NAME - логин для авторизации в nexus
+- CI_ARTIFACT_REPO_TOKEN - пароль для авторизации в nexus
 
 ## Quick Start
 
@@ -77,17 +126,20 @@ Note, that by default container will run using `application-dev.yml`
 
 ### Run code quality assurance tasks
 
-If you want to get total coverage and sonar analysis with local changes, then you should run following tasks:
+Когда проект собирается с использованием `build` задачи gradle detekt и ktlint проверки проходят автоматически,
+и detekt xml отчет формируется по путям `schedule_construction_app/build/report/detekt`
+и `schedule_construction_api/build/report/detekt`. Также есть возможность запускать проверки вручную командой
+```
+.\gradlew detekt
+```
+
+Для получения процента покрытия необходимо:
 ```
 .\gradlew test jacocoTestReport coverage
-.\gradlew sonarqube -D"sonar.host.url"="https://sonarcloud.io" -D"sonar.login"="b9694e03ee5fbf20e87d643ef0efccc104332567"
+.\gradlew sonar -D"sonar.host.url"="https://sonarcloud.io" -D"sonar.login"="YOUR_LOGIN" -D"sonar.projectKey"="KEY" -D"sonar.organization"="ORG" 
 ```
-Then, jacoco test report with coverage will be generated on local machine in build folder
-and sonar analysis will take place on server and will be visible on sonarcloud instance.
-Also, it is recommended to install [SonarLint](https://plugins.jetbrains.com/plugin/7973-sonarlint) Intellij plugin for integration of code
-quality analysis more native-like
-Also, there is a possibility to configure jacoco coverage as a replace for common Idea coverage
-analyzer (it's optional)
+Отчет по покрытию будет сгенерирован в `schedule_construction_app/build/report/jacoco`
+Кроме того, при вызове sonar с помощью gradle задачи сгенерированный detekt отчет будет добавлен к анализу.
 
 ## API
 

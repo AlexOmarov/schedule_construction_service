@@ -2,7 +2,6 @@ rootProject.name = "schedule_construction_service"
 
 include("schedule_construction_app", "schedule_construction_api")
 
-enableFeaturePreview("VERSION_CATALOGS")
 
 dependencyResolutionManagement {
     repositories {

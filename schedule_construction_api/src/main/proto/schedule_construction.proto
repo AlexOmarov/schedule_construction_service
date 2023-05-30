@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package ru.shedlab.scheduleconstruction.presentation.grpc;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+
+option java_multiple_files = true;
+
+service StubService {
+  rpc getStub (StubRequest) returns (StubResponse) {}
+}
+
+//Request
+
+message StubRequest {
+  string id = 1;
+}
+
+//Response
+
+message StubResponse {
+  PageDto page = 1;
+  int32 total = 2;
+  repeated string conversions = 3;
+}
+
+message SortDto {
+  ParameterName parameter = 1;
+  SortDirection direction = 2;
+}
+
+message PageDto {
+  int32 number = 1;
+  int32 size = 2;
+}
+
+enum ParameterName {
+  ID = 0;
+}
+
+enum SortDirection {
+  ASC = 0;
+  DESC = 1;
+}
+
+//Custom types
+
+message NullableString {
+  oneof kind {
+    google.protobuf.NullValue null = 1;
+    string data = 2;
+  }
+}
