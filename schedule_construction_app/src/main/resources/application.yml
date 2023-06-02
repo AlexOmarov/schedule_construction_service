@@ -77,8 +77,8 @@ spring:
   flyway:
     enabled: 'true'
     url: 'jdbc:postgresql://${database.host}:${database.port}/${database.name}'
-    user: '${spring.r2dbc.username}'
-    password: '${spring.r2dbc.password}'
+    user: '${database.user}'
+    password: '${database.password}'
     default-schema: '${database.schema}'
   application:
     name: 'schedule_construction_service'
@@ -108,6 +108,7 @@ kafka:
   group-id: 'cpa-conversions-service'
   stub-topic: '${app.kafka.stub-topic}'
   dlt-topic: '${app.kafka.dlt-topic}'
+  health-timeout-millis: 50
   stub-consuming-enabled: true
   max-poll-records: 5
   commit-interval: 5 # in seconds

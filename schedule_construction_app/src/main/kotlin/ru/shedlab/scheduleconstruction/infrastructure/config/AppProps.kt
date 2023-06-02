@@ -51,6 +51,7 @@ data class AppProps(
         val dltResendNumber: Int,
         val sender: SenderProps,
         val stubTopic: String,
+        val healthTimeoutMillis: Long,
         val dltTopic: String
     )
 

@@ -3,6 +3,8 @@ package ru.shedlab.scheduleconstruction.infrastructure.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.propagation.Propagator
+import org.apache.kafka.clients.admin.AdminClient
+import org.apache.kafka.clients.admin.AdminClientConfig
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.Deserializer
@@ -42,6 +44,13 @@ class KafkaConfig(private val props: AppProps) {
     @Bean
     fun dltEventSender(mapper: ObjectMapper): KafkaSender<String, DltEvent<Any>> {
         return KafkaSender.create(senderProps(DltEventSerializer(mapper)))
+    }
+
+    @Bean
+    fun adminClient(props: AppProps): AdminClient {
+        val configs: MutableMap<String, Any> = HashMap()
+        configs[AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG] = props.kafka.brokers
+        return AdminClient.create(configs)
     }
 
     @Bean
