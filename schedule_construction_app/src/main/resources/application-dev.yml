@@ -8,3 +8,6 @@ app:
     other-service-host: localhost:12000
   kafka:
     brokers: localhost:6003
+
+kafka:
+  consuming-enabled: false

@@ -3,47 +3,33 @@ package ru.shedlab.scheduleconstruction.infrastructure.kafka
 import io.micrometer.core.instrument.kotlin.asContextElement
 import io.micrometer.observation.ObservationRegistry
 import kotlinx.coroutines.reactor.mono
-import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor
 import org.springframework.boot.actuate.health.ReactiveHealthIndicator
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.support.micrometer.KafkaListenerObservation
 import org.springframework.kafka.support.micrometer.KafkaRecordReceiverContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
 import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
-import ru.shedlab.scheduleconstruction.infrastructure.kafka.observability.KafkaClusterHealthIndicator
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.observability.KafkaReceiverHealthIndicator
 import java.time.Duration
 import java.util.UUID
 
-@Configuration
-class KafkaConsumerLauncher(
+class KafkaConsumerLauncherDecorator(
     private val props: AppProps,
     private val receiverSetups: List<MessageConsumer<out Any>>,
     private val observationRegistry: ObservationRegistry
 ) {
-    private val log = LoggerFactory.getLogger(KafkaConsumerLauncher::class.java)
+    private val log = LoggerFactory.getLogger(KafkaConsumerLauncherDecorator::class.java)
 
-    @Bean
-    fun kafkaReactiveReceivers(): CompositeReactiveHealthContributor {
+    fun launchConsumers(): CompositeReactiveHealthContributor {
         val registry: MutableMap<String, ReactiveHealthIndicator> = HashMap()
-        if (props.kafka.consumingEnabled) {
-            startConsumers(registry)
-        } else {
-            log.info("Kafka is disabled: $props")
-        }
+        startConsumers(registry)
         return CompositeReactiveHealthContributor.fromMap(registry)
     }
 
-    @Bean
-    fun kafkaClusterHealth(kafkaAdminClient: AdminClient): ReactiveHealthIndicator {
-        return KafkaClusterHealthIndicator(kafkaAdminClient, props.kafka.healthTimeoutMillis)
-    }
 
     @Suppress("UNCHECKED_CAST")
     private fun startConsumers(registry: MutableMap<String, ReactiveHealthIndicator>) {

@@ -1,6 +1,7 @@
 package ru.shedlab.scheduleconstruction.infrastructure.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.micrometer.observation.ObservationRegistry
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.propagation.Propagator
 import org.apache.kafka.clients.admin.AdminClient
@@ -11,9 +12,10 @@ import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
+import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.tracing.MicrometerTracingAutoConfiguration
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor
+import org.springframework.boot.actuate.health.ReactiveHealthIndicator
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -21,6 +23,9 @@ import reactor.kafka.receiver.KafkaReceiver
 import reactor.kafka.receiver.ReceiverOptions
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderOptions
+import ru.shedlab.scheduleconstruction.infrastructure.kafka.KafkaConsumerLauncherDecorator
+import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumer
+import ru.shedlab.scheduleconstruction.infrastructure.kafka.observability.KafkaClusterHealthIndicator
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.observability.KafkaReceiverPropagatingReceiverTracingObservationHandler
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.serde.dlt.DltEventDeserializer
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.serde.dlt.DltEventSerializer
@@ -31,6 +36,8 @@ import java.time.Duration
 
 @Configuration
 class KafkaConfig(private val props: AppProps) {
+    private val logger = LoggerFactory.getLogger(KafkaConfig::class.java)
+
     @Bean
     fun stubEventReceiver(mapper: ObjectMapper): KafkaReceiver<String, StubEvent?> {
         return KafkaReceiver.create(receiverOpts(StubEventDeserializer(mapper), props.kafka.stubTopic))
@@ -47,15 +54,35 @@ class KafkaConfig(private val props: AppProps) {
     }
 
     @Bean
-    fun adminClient(props: AppProps): AdminClient {
+    fun adminClient(): AdminClient {
         val configs: MutableMap<String, Any> = HashMap()
         configs[AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG] = props.kafka.brokers
         return AdminClient.create(configs)
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnBean(Tracer::class)
+    fun kafkaReactiveReceivers(
+        props: AppProps,
+        receiverSetups: List<MessageConsumer<out Any>>,
+        observationRegistry: ObservationRegistry
+    ): CompositeReactiveHealthContributor {
+        val launcher = KafkaConsumerLauncherDecorator(props, receiverSetups, observationRegistry)
+        var handler = CompositeReactiveHealthContributor.fromMap(HashMap<String, ReactiveHealthIndicator>())
+        if (props.kafka.consumingEnabled) {
+            handler = launcher.launchConsumers()
+        } else {
+            logger.info("Kafka is disabled: $props")
+        }
+        return handler
+    }
+
+    @Bean
+    fun kafkaClusterHealth(kafkaAdminClient: AdminClient): ReactiveHealthIndicator {
+        return KafkaClusterHealthIndicator(kafkaAdminClient, props.kafka.healthTimeoutMillis)
+    }
+
+
+    @Bean
     @Order(MicrometerTracingAutoConfiguration.DEFAULT_TRACING_OBSERVATION_HANDLER_ORDER - 1)
     fun kafkaReceiverPropagatingReceiverTracingObservationHandler(tracer: Tracer, propagator: Propagator):
         KafkaReceiverPropagatingReceiverTracingObservationHandler {
