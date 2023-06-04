@@ -30,7 +30,6 @@ class KafkaConsumerLauncherDecorator(
         return CompositeReactiveHealthContributor.fromMap(registry)
     }
 
-
     @Suppress("UNCHECKED_CAST")
     private fun startConsumers(registry: MutableMap<String, ReactiveHealthIndicator>) {
         receiverSetups.filter { it.enabled() }

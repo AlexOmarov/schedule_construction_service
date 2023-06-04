@@ -81,7 +81,6 @@ class KafkaConfig(private val props: AppProps) {
         return KafkaClusterHealthIndicator(kafkaAdminClient, props.kafka.healthTimeoutMillis)
     }
 
-
     @Bean
     @Order(MicrometerTracingAutoConfiguration.DEFAULT_TRACING_OBSERVATION_HANDLER_ORDER - 1)
     fun kafkaReceiverPropagatingReceiverTracingObservationHandler(tracer: Tracer, propagator: Propagator):
