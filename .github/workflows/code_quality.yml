@@ -27,6 +27,11 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'liberica'
+          java-version: '17'
+
       - name: Setup
         uses: gradle/gradle-build-action@v2
 
