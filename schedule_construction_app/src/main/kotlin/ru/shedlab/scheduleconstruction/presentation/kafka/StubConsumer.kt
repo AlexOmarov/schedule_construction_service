@@ -22,4 +22,7 @@ class StubConsumer(
     override fun getName(): String = "STUB_RECEIVER"
 
     override fun getDelaySeconds() = null
+    override fun getExecutionStrategy(): MessageConsumer.Companion.Exx {
+        return MessageConsumer.Companion.Exx.SEQUENTIAL
+    }
 }

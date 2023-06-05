@@ -61,9 +61,21 @@ class KafkaConsumerLauncherDecorator(
 
     private fun handleBatch(records: Flux<ConsumerRecord<String, Any?>>, receiver: MessageConsumer<Any>): Mono<Long> {
         return records
-            .concatMap { record -> handleRecord(record, receiver) }
-            .count()
-            .map { log.info("Completed batch of size $it"); it }
+            .groupBy { record -> record.partition() }
+            .flatMap { partitionRecords ->
+                if (receiver.getExecutionStrategy() == MessageConsumer.Companion.Exx.SEQUENTIAL) {
+                    // Process records within each partition sequentially
+                    partitionRecords.concatMap { record -> handleRecord(record, receiver) }
+                } else {
+                    // Process records within each partition parallel
+                    partitionRecords.flatMap { record -> handleRecord(record, receiver) }
+                }.count()
+            }
+            .reduce(Long::plus) // Sum the counts across all partitions
+            .map { totalProcessedRecords ->
+                log.info("Completed batch of size $totalProcessedRecords")
+                totalProcessedRecords
+            }
     }
 
     private fun getRetrySettings(): Retry {

@@ -74,6 +74,7 @@ kotlin-jackson = { module = "com.fasterxml.jackson.module:jackson-module-kotlin"
 
 # Spring
 spring-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
+spring-starter-security = { module = "org.springframework.security:spring-security-core" }
 spring-starter-kafka = { module = "org.springframework.kafka:spring-kafka", version.ref="spring-kafka" }
 spring-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 spring-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }

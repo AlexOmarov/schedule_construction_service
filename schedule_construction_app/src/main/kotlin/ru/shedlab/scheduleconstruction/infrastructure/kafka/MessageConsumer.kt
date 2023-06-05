@@ -8,4 +8,11 @@ interface MessageConsumer<T> {
     fun enabled(): Boolean
     fun getName(): String
     fun getDelaySeconds(): Long?
+    fun getExecutionStrategy(): Exx = Exx.PARALLEL
+
+    companion object {
+        enum class Exx {
+            PARALLEL, SEQUENTIAL
+        }
+    }
 }
