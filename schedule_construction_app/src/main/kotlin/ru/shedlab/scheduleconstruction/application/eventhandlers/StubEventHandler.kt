@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.shedlab.scheduleconstruction.application.StubService
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumptionResult
-import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumptionResult.Companion.EsbResultCode.OK
+import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumptionResult.MessageConsumptionResultCode.OK
 import ru.shedlab.scheduleconstruction.presentation.kafka.StubEvent
 import java.util.*
 

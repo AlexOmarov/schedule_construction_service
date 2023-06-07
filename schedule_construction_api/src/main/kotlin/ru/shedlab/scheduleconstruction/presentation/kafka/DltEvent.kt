@@ -6,9 +6,7 @@ data class DltEvent<T>(
     val data: String,
     var processingAttempts: Long
 ) {
-    companion object {
-        enum class PayloadType {
-            STUB
-        }
+    enum class PayloadType {
+        STUB
     }
 }

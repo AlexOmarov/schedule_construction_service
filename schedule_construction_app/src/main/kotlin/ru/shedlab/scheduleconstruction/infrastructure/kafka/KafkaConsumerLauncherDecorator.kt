@@ -91,7 +91,7 @@ class KafkaConsumerLauncherDecorator(
         startEventObservation(record, receiver)
         return if (record.value() == null) {
             log.warn("Got empty value for record $record")
-            Mono.just(MessageConsumptionResult(MessageConsumptionResult.Companion.EsbResultCode.FAILED))
+            Mono.just(MessageConsumptionResult(MessageConsumptionResult.MessageConsumptionResultCode.FAILED))
         } else {
             mono(observationRegistry.asContextElement()) { receiver.handle(record.value()!!) }
         }

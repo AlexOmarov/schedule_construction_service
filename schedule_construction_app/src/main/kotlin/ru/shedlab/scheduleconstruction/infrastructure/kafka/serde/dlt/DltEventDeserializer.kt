@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.kafka.common.serialization.Deserializer
 import org.slf4j.LoggerFactory
 import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent
-import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent.Companion.PayloadType
-import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent.Companion.PayloadType.STUB
+import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent.PayloadType
+import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent.PayloadType.STUB
 import ru.shedlab.scheduleconstruction.presentation.kafka.StubEvent
 import java.nio.charset.Charset
 
