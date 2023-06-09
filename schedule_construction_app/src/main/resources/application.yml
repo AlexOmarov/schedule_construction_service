@@ -87,6 +87,16 @@ spring:
       port: 7000
       transport: websocket
       mapping-path: /rsocket
+      ssl:
+        enabled: false
+        protocol: TLS
+        client-auth: none
+        key-store: classpath:certs/wss.p12
+        key-store-type: JKS
+        key-store-password: wsswss
+        key-alias: wss
+        trust-store: classpath:certs/wss.p12
+        trust-store-password: wsswss
 
 grpc:
   server:
@@ -131,4 +141,4 @@ server:
   port: '${app.http-port}'
 
 rsocket:
-  uri: 'https://localhost:7000/rsocket'
+  uri: 'http://localhost:7000/rsocket'

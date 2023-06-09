@@ -8,7 +8,7 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
 import org.springframework.messaging.rsocket.RSocketRequester
-import org.springframework.messaging.rsocket.retrieveAndAwait
+import org.springframework.messaging.rsocket.retrieveAndAwaitOrNull
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.util.MimeTypeUtils
@@ -39,7 +39,7 @@ class StubScheduler(
                     .route("main.${Random.nextInt()}")
                     .metadata("", RSOCKET_AUTHENTICATION_MIME_TYPE)
                     .data(Stub(UUID.randomUUID(), "Rsocket request"))
-                    .retrieveAndAwait<Stub>()
+                    .retrieveAndAwaitOrNull<Stub>()
                 log.info("Received $stub from scheduler")
                 log.info("StubScheduler has been completed")
             }
