@@ -3,6 +3,9 @@
 # Kotlin
 kotiln="1.7.21"
 
+# Reactor
+reactor="3.5.4"
+
 # Cache
 ehcache="3.10.8"
 
@@ -72,6 +75,9 @@ kotlin-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines
 kotlin-extensions = { module = "io.projectreactor.kotlin:reactor-kotlin-extensions"}
 kotlin-jackson = { module = "com.fasterxml.jackson.module:jackson-module-kotlin"}
 
+# Reactor
+reactor-core = { module = "io.projectreactor:reactor-core", version.ref="reactor" }
+
 # Spring
 spring-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
 spring-starter-security = { module = "org.springframework.security:spring-security-core" }
@@ -131,7 +137,7 @@ testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.re
 testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref="testcontainers" }
 mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
-reactor-test = { module = "io.projectreactor:reactor-test" }
+reactor-test = { module = "io.projectreactor:reactor-test", version.ref="reactor" }
 awaitility = { module = "org.awaitility:awaitility-kotlin", version.ref = "awaitility" }
 
 # Logging
