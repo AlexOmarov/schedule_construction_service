@@ -91,12 +91,10 @@ spring:
         enabled: false
         protocol: TLS
         client-auth: none
-        key-store: classpath:certs/wss.p12
-        key-store-type: JKS
+        key-store: classpath:certs/rsocket/wss.p12
+        key-store-type: pkcs12
         key-store-password: wsswss
         key-alias: wss
-        trust-store: classpath:certs/wss.p12
-        trust-store-password: wsswss
 
 grpc:
   server:
@@ -142,3 +140,5 @@ server:
 
 rsocket:
   uri: 'http://localhost:7000/rsocket'
+  trust-store: classpath:certs/rsocket/wss.p12
+  trust-store-password: wsswss

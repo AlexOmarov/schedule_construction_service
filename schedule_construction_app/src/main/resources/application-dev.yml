@@ -10,4 +10,4 @@ app:
     brokers: localhost:6003
 
 kafka:
-  consuming-enabled: false
+  consuming-enabled: true
