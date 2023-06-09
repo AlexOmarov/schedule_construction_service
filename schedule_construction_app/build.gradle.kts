@@ -26,9 +26,12 @@ dependencies {
     implementation(libs.logstash.logback)
 
     implementation(libs.reactor.core)
+    implementation(libs.hessian)
 
     implementation(libs.spring.starter.webflux)
+    implementation(libs.spring.starter.rsocket)
     implementation(libs.spring.starter.security)
+    //implementation(libs.spring.starter.security.rsocket)
     implementation(libs.spring.starter.kafka)
     implementation(libs.spring.starter.r2dbc)
     implementation(libs.spring.starter.validation)

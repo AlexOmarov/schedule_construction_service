@@ -6,6 +6,9 @@ kotiln="1.7.21"
 # Reactor
 reactor="3.5.4"
 
+# Hessian
+hessian="4.0.66"
+
 # Cache
 ehcache="3.10.8"
 
@@ -80,7 +83,9 @@ reactor-core = { module = "io.projectreactor:reactor-core", version.ref="reactor
 
 # Spring
 spring-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
+spring-starter-rsocket = { module = "org.springframework.boot:spring-boot-starter-rsocket" }
 spring-starter-security = { module = "org.springframework.security:spring-security-core" }
+spring-starter-security-rsocket = { module = "org.springframework.security:spring-security-rsocket" }
 spring-starter-kafka = { module = "org.springframework.kafka:spring-kafka", version.ref="spring-kafka" }
 spring-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 spring-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
@@ -122,6 +127,9 @@ flyway = { module = "org.flywaydb:flyway-core" }
 postgres = { module = "org.postgresql:postgresql" }
 postgres-r2dbc = { module = "org.postgresql:r2dbc-postgresql", version.ref = "r2dbc_postgres" }
 mssql-r2dbc = { module = "io.r2dbc:r2dbc-mssql", version.ref = "r2dbc_mssql" }
+
+# Hessian
+hessian = { module = "com.caucho:hessian", version.ref="hessian"}
 
 # OpenApi
 openapi-webflux-ui = { module = "org.springdoc:springdoc-openapi-starter-webflux-ui", version.ref = "openapi" }

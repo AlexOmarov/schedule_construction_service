@@ -82,6 +82,11 @@ spring:
     default-schema: '${database.schema}'
   application:
     name: 'schedule_construction_service'
+  rsocket:
+    server:
+      port: 7000
+      transport: websocket
+      mapping-path: /rsocket
 
 grpc:
   server:
@@ -124,3 +129,6 @@ messages:
 
 server:
   port: '${app.http-port}'
+
+rsocket:
+  uri: 'https://localhost:7000/rsocket'

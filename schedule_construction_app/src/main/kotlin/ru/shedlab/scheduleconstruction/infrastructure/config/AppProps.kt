@@ -8,8 +8,12 @@ data class AppProps(
     val messages: MessagesProps,
     val app: ApplicationProps,
     val kafka: KafkaProps,
+    val rsocket: RsocketProps,
     val cache: CacheProps
 ) {
+    data class RsocketProps(
+        val uri: String
+    )
 
     data class SchedulingProps(
         val threadPoolSize: Int,
