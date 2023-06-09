@@ -8,7 +8,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import ru.shedlab.scheduleconstruction.infrastructure.hessian.HessianCodecSupport
 
-class HessianReader: HessianCodecSupport(), HttpMessageReader<Any> {
+class HessianReader : HessianCodecSupport(), HttpMessageReader<Any> {
     override fun getReadableMediaTypes(): MutableList<MediaType> {
         return HESSIAN_MEDIA_TYPES
     }

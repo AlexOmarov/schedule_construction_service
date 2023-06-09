@@ -8,7 +8,7 @@ import org.springframework.http.codec.HttpMessageWriter
 import reactor.core.publisher.Mono
 import ru.shedlab.scheduleconstruction.infrastructure.hessian.HessianCodecSupport
 
-class HessianWriter: HessianCodecSupport(), HttpMessageWriter<Any> {
+class HessianWriter : HessianCodecSupport(), HttpMessageWriter<Any> {
     override fun getWritableMediaTypes(): MutableList<MediaType> {
         return HESSIAN_MEDIA_TYPES
     }
@@ -17,6 +17,7 @@ class HessianWriter: HessianCodecSupport(), HttpMessageWriter<Any> {
         return mediaType != null && HESSIAN_MEDIA_TYPES.contains(mediaType)
     }
 
+    @Suppress("kotlin:S6508")
     override fun write(
         inputStream: Publisher<out Any>,
         elementType: ResolvableType,

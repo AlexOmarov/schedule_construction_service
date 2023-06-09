@@ -10,7 +10,7 @@ import org.springframework.http.HttpOutputMessage
 import org.springframework.http.MediaType
 import org.springframework.util.MimeType
 
-abstract class HessianCodecSupport {
+open class HessianCodecSupport {
 
     fun <T> decode(clazz: Class<T>, dataBuffer: DataBuffer): T {
         val inpStr = dataBuffer.asInputStream()

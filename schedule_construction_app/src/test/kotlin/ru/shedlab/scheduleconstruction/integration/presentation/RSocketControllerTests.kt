@@ -1,13 +1,17 @@
 package ru.shedlab.scheduleconstruction.integration.presentation
 
 import io.rsocket.core.RSocketConnector
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.messaging.rsocket.RSocketRequester
 import org.springframework.messaging.rsocket.RSocketStrategies
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.MimeType
 import reactor.util.retry.Retry
@@ -22,6 +26,7 @@ import kotlin.random.Random
 
 @ExtendWith(SpringExtension::class)
 @WebFluxTest
+@ActiveProfiles("test")
 class RSocketControllerTests {
 
     @MockBean
@@ -31,6 +36,9 @@ class RSocketControllerTests {
 
     @Test
     fun `test that messages API returns latest messages`() {
+        runBlocking {
+            whenever(service.getStub(any())).thenReturn(Stub(UUID.randomUUID(), "value"))
+        }
         val rSocketRequester = RSocketRequester.builder()
             .rsocketConnector { rSocketConnector: RSocketConnector ->
                 rSocketConnector.reconnect(Retry.fixedDelay(2, Duration.ofSeconds(2)))
@@ -40,9 +48,9 @@ class RSocketControllerTests {
                 RSocketStrategies.builder()
                     .encoders { it.add(HessianEncoder()) }
                     .decoders { it.add(HessianDecoder()) }
-                    .build())
+                    .build()
+            )
             .websocket(URI.create("http://localhost:7000/rsocket"))
-
 
         rSocketRequester
             .route("main.${Random.nextInt()}")

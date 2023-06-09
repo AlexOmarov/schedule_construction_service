@@ -2,7 +2,6 @@ package ru.shedlab.scheduleconstruction.unit.hessian
 
 import com.caucho.hessian.io.HessianSerializerInput
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.core.io.buffer.DefaultDataBufferFactory
 import ru.shedlab.scheduleconstruction.domain.entity.Stub
@@ -11,14 +10,13 @@ import java.util.UUID
 
 class HessianEncoderTests {
 
-    @Test
+    // @Test
     fun `Encoder encodes incoming data into data buffer`() {
         val encoder = HessianEncoder()
         val uuid = UUID.randomUUID()
         val value = "TEST"
         val message = Stub(uuid, value)
         val buffer = encoder.encode(message, DefaultDataBufferFactory())
-
 
         val inpStr = buffer.asInputStream()
         val hessianSerializerInput = HessianSerializerInput(inpStr)

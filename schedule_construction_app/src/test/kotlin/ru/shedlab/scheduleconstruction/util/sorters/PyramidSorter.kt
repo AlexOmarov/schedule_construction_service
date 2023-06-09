@@ -1,12 +1,14 @@
 package ru.shedlab.scheduleconstruction.util.sorters
 
+import org.junit.jupiter.api.Test
+
 // O(n log n) - время
 // O(n) - память
 class PyramidSorter {
 
-    //@Test
+    @Test
     fun `Pyramid sort`() {
-        val array = intArrayOf(5,3,7,9,9,0,2)
+        val array = intArrayOf(5, 3, 7, 9, 9, 0, 2)
         heapSort(array)
         array.forEach { print("$it, ") }
     }

@@ -1,10 +1,12 @@
 package ru.shedlab.scheduleconstruction.util.sorters
 
+import org.junit.jupiter.api.Test
+
 // O(n log n) - время (среднее)
 // O(n) - память
 class QuickSorter {
 
-    //@Test
+    @Test
     fun `Quick sort`() {
         val array = intArrayOf(5, 3, 7, 9, 9, 0, 2, 2, 7, 9, 5, 3, 7)
         sort(array, 0, array.size - 1)
@@ -12,7 +14,6 @@ class QuickSorter {
     }
 
     private fun sort(array: IntArray, left: Int, right: Int) {
-
         var leftBorder = left
         var rightBorder = right
         val pivot = array[(left + right) / 2]

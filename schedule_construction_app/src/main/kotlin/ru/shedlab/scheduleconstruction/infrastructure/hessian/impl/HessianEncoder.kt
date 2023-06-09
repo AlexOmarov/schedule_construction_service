@@ -10,7 +10,6 @@ import org.springframework.util.MimeType
 import reactor.core.publisher.Flux
 import ru.shedlab.scheduleconstruction.infrastructure.hessian.HessianCodecSupport
 
-
 class HessianEncoder : HessianCodecSupport(), HttpMessageEncoder<Any> {
 
     override fun getStreamingMediaTypes(): List<MediaType> {

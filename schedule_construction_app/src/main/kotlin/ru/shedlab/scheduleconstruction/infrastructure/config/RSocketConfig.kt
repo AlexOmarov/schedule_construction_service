@@ -20,25 +20,11 @@ class RSocketConfig(private val props: AppProps) {
     fun messageHandler(): RSocketMessageHandler {
         val handler = RSocketMessageHandler()
         handler.rSocketStrategies = RSocketStrategies.builder()
-            .encoders { it.add(HessianEncoder())/*; it.add(BearerTokenAuthenticationEncoder())*/ }
+            .encoders { it.add(HessianEncoder()) }
             .decoders { it.add(HessianDecoder()) }
             .build()
-        /*handler.argumentResolverConfigurer.addCustomResolver(AuthenticationPrincipalArgumentResolver())*/
         return handler
     }
-
-    /*    @Bean
-        fun authorization(
-            security: RSocketSecurity,
-            authenticationManager: ReactiveAuthenticationManager
-        ): PayloadSocketAcceptorInterceptor {
-            security.authorizePayload { authorize: AuthorizePayloadsSpec ->
-                authorize
-                    .anyRequest().hasRole("PLAYER")
-                    .anyExchange().permitAll()
-            }.jwt { it.authenticationManager(authenticationManager) }
-            return security.build()
-        }*/
 
     @Bean
     fun rSocketRequester(): RSocketRequester {
@@ -48,10 +34,12 @@ class RSocketConfig(private val props: AppProps) {
                 rSocketConnector.reconnect(Retry.fixedDelay(2, Duration.ofSeconds(2)))
             }
             .dataMimeType(HESSIAN_MIME_TYPE)
-            .rsocketStrategies(RSocketStrategies.builder()
-                .encoders { it.add(HessianEncoder())/*; it.add(BearerTokenAuthenticationEncoder())*/ }
-                .decoders { it.add(HessianDecoder()) }
-                .build())
+            .rsocketStrategies(
+                RSocketStrategies.builder()
+                    .encoders { it.add(HessianEncoder()) }
+                    .decoders { it.add(HessianDecoder()) }
+                    .build()
+            )
             .websocket(URI.create(props.rsocket.uri))
     }
 }
