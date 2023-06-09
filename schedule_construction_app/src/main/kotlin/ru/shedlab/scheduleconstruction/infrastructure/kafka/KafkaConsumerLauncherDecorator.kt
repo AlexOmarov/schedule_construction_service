@@ -63,7 +63,7 @@ class KafkaConsumerLauncherDecorator(
         return records
             .groupBy { record -> record.partition() }
             .flatMap { partitionRecords ->
-                if (receiver.getExecutionStrategy() == MessageConsumer.Companion.Exx.SEQUENTIAL) {
+                if (receiver.getExecutionStrategy() == MessageConsumer.ExecutionStrategy.SEQUENTIAL) {
                     // Process records within each partition sequentially
                     partitionRecords.concatMap { record -> handleRecord(record, receiver) }
                 } else {
@@ -87,11 +87,11 @@ class KafkaConsumerLauncherDecorator(
     private fun handleRecord(
         record: ConsumerRecord<String, Any?>,
         receiver: MessageConsumer<Any>
-    ): Mono<MessageConsumptionResult> {
+    ): Mono<EventConsumptionResult> {
         startEventObservation(record, receiver)
         return if (record.value() == null) {
             log.warn("Got empty value for record $record")
-            Mono.just(MessageConsumptionResult(MessageConsumptionResult.MessageConsumptionResultCode.FAILED))
+            Mono.just(EventConsumptionResult(EventConsumptionResult.EventConsumptionResultCode.FAILED))
         } else {
             mono(observationRegistry.asContextElement()) { receiver.handle(record.value()!!) }
         }

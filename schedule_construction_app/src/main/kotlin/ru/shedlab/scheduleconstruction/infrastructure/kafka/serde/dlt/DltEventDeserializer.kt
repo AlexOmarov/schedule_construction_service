@@ -19,7 +19,8 @@ class DltEventDeserializer(private val mapper: ObjectMapper) : Deserializer<DltE
         val rootNode = mapper.readValue(data, JsonNode::class.java)
         val payloadType = PayloadType.valueOf(rootNode[payloadTypeNodeName].textValue())
         val stringData = rootNode[dataTypeNodeName].textValue()
-        val processingAttempts = rootNode[attemptsTypeNodeName].longValue()
+        val key = rootNode[keyNodeName].textValue()
+        val processingAttempts = rootNode[attemptsTypeNodeName].intValue()
 
         return try {
             val type: JavaType = when (payloadType) {
@@ -34,6 +35,7 @@ class DltEventDeserializer(private val mapper: ObjectMapper) : Deserializer<DltE
             log.error("Got exception $e while trying to parse DltEvent from data $data")
             return DltEvent(
                 null,
+                key,
                 payloadType,
                 stringData,
                 processingAttempts
@@ -44,6 +46,7 @@ class DltEventDeserializer(private val mapper: ObjectMapper) : Deserializer<DltE
     companion object {
         private const val payloadTypeNodeName = "payloadType"
         private const val dataTypeNodeName = "data"
+        private const val keyNodeName = "data"
         private const val attemptsTypeNodeName = "processingAttempts"
     }
 }

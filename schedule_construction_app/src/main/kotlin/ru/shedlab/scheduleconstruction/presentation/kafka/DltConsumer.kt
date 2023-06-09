@@ -2,10 +2,11 @@ package ru.shedlab.scheduleconstruction.presentation.kafka
 
 import org.springframework.stereotype.Component
 import reactor.kafka.receiver.KafkaReceiver
+import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
 import ru.shedlab.scheduleconstruction.application.eventhandlers.IEventHandler
 import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.infrastructure.kafka.EventConsumptionResult
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumer
-import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumptionResult
 
 @Component
 class DltConsumer(
@@ -14,7 +15,7 @@ class DltConsumer(
     private val props: AppProps
 ) : MessageConsumer<DltEvent<Any>> {
     override suspend fun handle(event: DltEvent<Any>):
-        MessageConsumptionResult = dltHandler.handle(event)
+        EventConsumptionResult = dltHandler.handle(event, EventMetadata(processingAttempts = 0, key = event.key))
 
     override fun getReceiver(): KafkaReceiver<String, DltEvent<Any>?> = dltReceiver
 

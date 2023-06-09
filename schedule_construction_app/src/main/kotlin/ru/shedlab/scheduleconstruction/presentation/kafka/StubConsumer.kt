@@ -2,10 +2,11 @@ package ru.shedlab.scheduleconstruction.presentation.kafka
 
 import org.springframework.stereotype.Component
 import reactor.kafka.receiver.KafkaReceiver
+import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
 import ru.shedlab.scheduleconstruction.application.eventhandlers.StubEventHandler
 import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.infrastructure.kafka.EventConsumptionResult
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumer
-import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumptionResult
 
 @Component
 class StubConsumer(
@@ -13,7 +14,8 @@ class StubConsumer(
     private val conversionUpdateHandler: StubEventHandler,
     private val props: AppProps
 ) : MessageConsumer<StubEvent> {
-    override suspend fun handle(event: StubEvent): MessageConsumptionResult = conversionUpdateHandler.handle(event)
+    override suspend fun handle(event: StubEvent): EventConsumptionResult =
+        conversionUpdateHandler.handle(event, EventMetadata(processingAttempts = 0, key = event.id))
 
     override fun getReceiver(): KafkaReceiver<String, StubEvent?> = conversionReceiver
 
@@ -22,7 +24,7 @@ class StubConsumer(
     override fun getName(): String = "STUB_RECEIVER"
 
     override fun getDelaySeconds() = null
-    override fun getExecutionStrategy(): MessageConsumer.Companion.Exx {
-        return MessageConsumer.Companion.Exx.SEQUENTIAL
+    override fun getExecutionStrategy(): MessageConsumer.ExecutionStrategy {
+        return MessageConsumer.ExecutionStrategy.SEQUENTIAL
     }
 }

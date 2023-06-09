@@ -1,5 +1,6 @@
 package ru.shedlab.scheduleconstruction.infrastructure.kafka
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.opentelemetry.api.trace.SpanId
 import io.opentelemetry.api.trace.TraceId
 import kotlinx.coroutines.flow.first
@@ -13,12 +14,19 @@ import reactor.core.publisher.Flux
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderRecord
 import reactor.kafka.sender.SenderResult
+import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
+import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent
 import kotlin.random.Random
 
 @Component
-class KafkaSenderDecorator {
+class KafkaSenderDecorator(
+    private val dltSender: KafkaSender<String, DltEvent<Any>>,
+    private val mapper: ObjectMapper,
+    private val props: AppProps,
+) {
     private val log = LoggerFactory.getLogger(KafkaSender::class.java)
-    suspend fun <T> send(event: T, topic: String, sender: KafkaSender<String, T>, key: String?): SenderResult<T> {
+    suspend fun <T> send(event: T, topic: String, sender: KafkaSender<String, T>, key: String): SenderResult<T> {
         val partition = null
         val timestamp = null
         val traceParent = getTraceParentHeader()
@@ -30,6 +38,40 @@ class KafkaSenderDecorator {
             .doOnError { e -> log.error("Send failed", e) }
             .asFlow()
             .first()
+
+        log.info(
+            "Message has been sent: ${result.correlationMetadata()} " +
+                "traceParent: $traceParent, " +
+                "topic/partition: ${result.recordMetadata().topic()}/${result.recordMetadata().partition()}, " +
+                "offset: ${result.recordMetadata().offset()}, " +
+                "timestamp: ${result.recordMetadata().timestamp()}"
+        )
+
+        return result
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    suspend fun <T : Any> sendDlt(event: T, metadata: EventMetadata): SenderResult<DltEvent<T>> {
+        val partition = null
+        val timestamp = null
+        val traceParent = getTraceParentHeader()
+        val headers = mutableListOf<Header>(RecordHeader(traceHeaderKey, traceParent.toByteArray()))
+
+        val dltEvent = DltEvent(
+            event,
+            metadata.key,
+            DltEvent.PayloadType.STUB,
+            mapper.writeValueAsString(event),
+            metadata.processingAttempts + 1
+        )
+
+        val record = ProducerRecord(props.kafka.dltTopic, partition, timestamp, metadata.key, dltEvent, headers)
+
+        val result =
+            dltSender.send(Flux.just(SenderRecord.create(record as ProducerRecord<String, DltEvent<Any>>, dltEvent)))
+                .doOnError { e -> log.error("Send failed", e) }
+                .asFlow()
+                .first()
 
         log.info(
             "Message has been sent: ${result.correlationMetadata()} " +
