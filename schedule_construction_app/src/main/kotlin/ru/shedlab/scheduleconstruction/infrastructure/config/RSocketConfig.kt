@@ -40,6 +40,6 @@ class RSocketConfig(private val props: AppProps) {
                     .decoders { it.add(HessianDecoder()) }
                     .build()
             )
-            .websocket(URI.create(props.rsocket.uri))
+            .websocket(URI.create(props.app.rsocket.uri))
     }
 }

@@ -1,16 +1,24 @@
-database:
-  host: ${DB_HOST:localhost}
-  port: ${DB_PORT:5432}
-  name: ${DB_NAME:schedule_construction_service}
-  schema: ${DB_SСHEMA:public}
-  user: ${DB_USER:schedule_construction_service}
-  password: ${DB_PASSWORD:schedule_construction_service}
-
 app:
-  grpc-port: ${GRPC_PORT:9090}
-  http-port: ${HTTP_PORT:8080}
-  grpc-clients:
-    other-service-host: ${OTHER_SERVICE_HOST:localhost:9090}
+  rsocket:
+    port: ${RSOCKET_PORT:7000}
+    ssl:
+      enabled: ${RSOCKET_SSL_ENABLED:false}
+    uri: 'http://localhost:7000/rsocket' # only for self-requesting, remove if use service as template
+    trust-store: ${RSOCKET_TRUSTSTORE_PATH:classpath:certs/rsocket/wss.p12}
+    trust-store-password: ${RSOCKET_TRUSTSTORE_PASSWORD:wsswss}
+  grpc:
+    port: ${GRPC_PORT:9090}
+    clients:
+      other-service-host: ${OTHER_SERVICE_HOST:localhost:9090}
+  http:
+    port: ${HTTP_PORT:8080}
+  database:
+    host: ${DB_HOST:localhost}
+    port: ${DB_PORT:5432}
+    name: ${DB_NAME:schedule_construction_service}
+    schema: ${DB_SСHEMA:public}
+    user: ${DB_USER:schedule_construction_service}
+    password: ${DB_PASSWORD:schedule_construction_service}
   kafka:
     brokers: ${KAFKA_BROKERS:localhost:9092}
     stub-topic: ${KAFKA_STUB_TOPIC:stub}
@@ -25,10 +33,6 @@ app:
       delay: ${SCHEDULING_STUB_DELAY:PT50S}
       batch-size: ${SCHEDULING_STUB_BATCH_SIZE:10}
       lock-max-duration: ${SCHEDULING_STUB_MAX_LOCK:PT1H}
-
-cache:
-  default-time: 5m
-  default-heap-size: 200
 
 management:
   health:
@@ -71,24 +75,24 @@ spring:
   main:
     banner-mode: off
   r2dbc:
-    url: 'r2dbc:postgresql://${database.host}:${database.port}/${database.name}?schema=${database.schema}'
-    username: '${database.user}'
-    password: '${database.password}'
+    url: 'r2dbc:postgresql://${app.database.host}:${app.database.port}/${app.database.name}?schema=${app.database.schema}'
+    username: '${app.database.user}'
+    password: '${app.database.password}'
   flyway:
     enabled: 'true'
-    url: 'jdbc:postgresql://${database.host}:${database.port}/${database.name}'
-    user: '${database.user}'
-    password: '${database.password}'
-    default-schema: '${database.schema}'
+    url: 'jdbc:postgresql://${app.database.host}:${app.database.port}/${app.database.name}'
+    user: '${app.database.user}'
+    password: '${app.database.password}'
+    default-schema: '${app.database.schema}'
   application:
     name: 'schedule_construction_service'
   rsocket:
     server:
-      port: 7000
+      port: '${app.rsocket.port}'
       transport: websocket
       mapping-path: /rsocket
       ssl:
-        enabled: false
+        enabled: '${app.rsocket.ssl.enabled}'
         protocol: TLS
         client-auth: none
         key-store: classpath:certs/rsocket/wss.p12
@@ -96,13 +100,17 @@ spring:
         key-store-password: wsswss
         key-alias: wss
 
+cache:
+  default-time: 5m
+  default-heap-size: 200
+
 grpc:
   server:
-    port: '${app.grpc-port}'
+    port: '${app.grpc.port}'
     permitKeepAliveTime: 2m
   client:
     other-service:
-      address: '${app.grpc-clients.other-service-host}'
+      address: '${app.grpc.clients.other-service-host}'
       enableKeepAlive: true
       keepAliveWithoutCalls: true
       setKeepAliveTime: 6m
@@ -116,7 +124,7 @@ kafka:
   retry-attempts: 10
   retry-period-seconds: 2
   retry-jitter: 0.75
-  offset-reset-config: 'earliest'
+  offset-reset-config: 'latest'
   brokers: '${app.kafka.brokers}'
   group-id: 'cpa-conversions-service'
   stub-topic: '${app.kafka.stub-topic}'
@@ -136,9 +144,4 @@ messages:
   basename: 'classpath:messages/messages'
 
 server:
-  port: '${app.http-port}'
-
-rsocket:
-  uri: 'http://localhost:7000/rsocket'
-  trust-store: classpath:certs/rsocket/wss.p12
-  trust-store-password: wsswss
+  port: '${app.http.port}'

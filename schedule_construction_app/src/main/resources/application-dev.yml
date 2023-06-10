@@ -1,11 +1,12 @@
-database:
-  port: '7003'
-
 app:
-  grpc-port: 12012
-  http-port: 11012
-  grpc-clients:
-    other-service-host: localhost:12000
+  grpc:
+    port: 12012
+    clients:
+      other-service-host: localhost:12000
+  http:
+    port: 11012
+  database:
+    port: '7003'
   kafka:
     brokers: localhost:6003
 

@@ -1,6 +1,6 @@
 # Schedule construction service
 
-Service for storing, forming and managing academic schedule.
+Service for showing PoC solutions, patterns, technologies usage.
 
 [![Java version](https://img.shields.io/static/v1?label=Java&message=17&color=blue)](https://sonarcloud.io/summary/new_code?id=AlexOmarov_schedule_construction_service)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AlexOmarov_schedule_construction_service&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=AlexOmarov_schedule_construction_service)
@@ -10,16 +10,21 @@ Service for storing, forming and managing academic schedule.
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Documentation](#documentation)
 - [Features](#features)
-- [Requirements](#requirements)
-- [Quick Start](#quick-start)
-- [API](#requirements)
+- [Documentation](#documentation)
+- [Deployment](#deployment)
 
-## Introduction
-
-Schedule construction service is responsible for managing academic schedule of the middle school classes.
+## Features
+* Rsocket / GRPC / HTTP / Kafka endpoints
+* TLS for Rsocket
+* Serialization to hessian
+* R2dbc postgres with transaction support
+* DLT topic
+* Example of inner architecture
+* Scheduling with distributed locking
+* Caching
+* Coroutines GRPC / RSOCKET / HTTP
+* Tracing (for all endpoints), metrics, logging in json
 
 ## Documentation
 
@@ -34,29 +39,25 @@ There you can find:
 - Descriptions of service API's, incoming and outcoming esb events
 - Some additional diagrams for better understanding of underlying processes
 
-## Features
- * Forming schedule for set of classes
+## Deployment
 
-## Развертка
-
-Сервис может разворачиваться как в докере, так и локально. Для развертки необходимо
-использовать инструменты указанных ниже версий:
+Service can be deployed locally or using docker. Required tools:
 * [Java 17 SDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 * [Gradle >= 8](https://gradle.org/install/)
 
-Сервис использует в своей работе несколько сторонних систем:
-- Postgres база (v. 15 и выше). Стандартные конфиги (с именами системных переменных):
-    - host: ${POSTGRES_HOST:localhost}
-    - port: ${POSTGRES_PORT:5432}
-    - name: ${POSTGRES_DATABASE:schedule_construction_service}
-    - schema: ${POSTGRES_DATABASE_SСHEMA:public}
-    - user: ${POSTGRES_USER_NAME:schedule_construction_service}
-    - password: ${POSTGRES_PASSWORD:schedule_construction_service}
-- Kafka (проверено с confluent платформой версии 7.3, kafka версии 3.3). Стандартные конфиги (с именами системных переменных):
-    - brokers: ${KAFKA_BROKERS:localhost:9092}
-    - conversion-update-topic: ${CONVERSION_UPDATE_TOPIC:conversion_update}
-- Другие системы. Стандартные конфиги (с именами системных переменных):
-    - other-service-host: ${OTHER_SERVICE_HOST:localhost:9090}
+Also, there should be several side systems. Following is the list of that with related config's env names (default in brackets):
+- Postgres (v. >= 15):
+    - host: POSTGRES_HOST (localhost)
+    - port: POSTGRES_PORT (5432)
+    - name: POSTGRES_DATABASE (schedule_construction_service)
+    - schema: POSTGRES_DATABASE_SСHEMA (public)
+    - user: POSTGRES_USER_NAME (schedule_construction_service)
+    - password: POSTGRES_PASSWORD (schedule_construction_service)
+- Kafka (confluent 7.3, kafka 3.3):
+    - brokers: KAFKA_BROKERS (localhost:9092)
+    - conversion-update-topic: CONVERSION_UPDATE_TOPIC (conversion_update)
+- Other systems:
+    - other-service-host: OTHER_SERVICE_HOST (localhost:9090)
   
 В стандартной конфигурации сервис держит открытым для http соединений порт 8080 и порт 9090 для grpc соединений.
 Настройку можно изменить, добавив `GRPC_PORT` и `HTTP_PORT` системные переменные.
