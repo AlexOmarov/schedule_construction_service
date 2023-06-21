@@ -1,7 +1,5 @@
 import java.io.StringReader
 
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
-
 plugins {
     id("jacoco")
     kotlin("jvm")
@@ -87,6 +85,10 @@ dependencies {
 
 springBoot {
     buildInfo()
+}
+
+detekt {
+    config = files("$rootDir/detekt-config.yml")
 }
 
 tasks.bootJar {

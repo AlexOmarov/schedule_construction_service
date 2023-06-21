@@ -1,5 +1,3 @@
-@file:Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
-
 import com.google.protobuf.gradle.id
 
 plugins {
@@ -29,6 +27,10 @@ sourceSets {
     val main by getting { }
     main.java.srcDirs("build/generated/source/proto/main/kotlin")
     main.java.srcDirs("build/generated/source/proto/main/grpckt")
+}
+
+detekt {
+    config = files("$rootDir/detekt-config.yml")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
