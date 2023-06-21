@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin) // Sonarqube may break if this plugin will be in subprojects with version
     alias(libs.plugins.sonarqube)
-    alias(libs.plugins.detekt)
 }
 
 allprojects {
