@@ -14,8 +14,8 @@ class StubConsumer(
     private val conversionUpdateHandler: StubEventHandler,
     private val props: AppProps
 ) : MessageConsumer<StubEvent> {
-    override suspend fun handle(event: StubEvent): EventConsumptionResult =
-        conversionUpdateHandler.handle(event, EventMetadata(processingAttempts = 0, key = event.id))
+    override suspend fun handle(event: StubEvent, metadata: EventMetadata): EventConsumptionResult =
+        conversionUpdateHandler.handle(event, metadata)
 
     override fun getReceiver(): KafkaReceiver<String, StubEvent?> = conversionReceiver
 

@@ -9,20 +9,26 @@ import org.springframework.boot.actuate.health.CompositeReactiveHealthContributo
 import org.springframework.boot.actuate.health.ReactiveHealthIndicator
 import org.springframework.kafka.support.micrometer.KafkaListenerObservation
 import org.springframework.kafka.support.micrometer.KafkaRecordReceiverContext
+import org.springframework.stereotype.Component
+import reactor.core.Disposables
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
+import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
 import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.observability.KafkaReceiverHealthIndicator
 import java.time.Duration
 import java.util.UUID
+import javax.annotation.PreDestroy
 
+@Component
 class KafkaConsumerLauncherDecorator(
     private val props: AppProps,
-    private val receiverSetups: List<MessageConsumer<out Any>>,
+    private val consumers: List<MessageConsumer<out Any>>,
     private val observationRegistry: ObservationRegistry
 ) {
     private val log = LoggerFactory.getLogger(KafkaConsumerLauncherDecorator::class.java)
+    private val disposables = Disposables.composite()
 
     fun launchConsumers(): CompositeReactiveHealthContributor {
         val registry: MutableMap<String, ReactiveHealthIndicator> = HashMap()
@@ -30,29 +36,34 @@ class KafkaConsumerLauncherDecorator(
         return CompositeReactiveHealthContributor.fromMap(registry)
     }
 
+    @PreDestroy
+    private fun closeConsumers() {
+        disposables.dispose()
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun startConsumers(registry: MutableMap<String, ReactiveHealthIndicator>) {
-        receiverSetups.filter { it.enabled() }
+        consumers.filter { it.enabled() }
             .forEach {
                 val disposable = consume(it as MessageConsumer<Any>).subscribe()
                 registry[it.getName()] = KafkaReceiverHealthIndicator(disposable)
             }
     }
 
-    private fun consume(receiver: MessageConsumer<Any>): Flux<Long> {
-        return getRecordsBatches(receiver)
-            .concatMap { batch -> handleBatch(batch, receiver) }
-            .doOnSubscribe { log.info("${receiver.getName()} receiver started") }
-            .doOnTerminate { log.info("${receiver.getName()} receiver terminated") }
+    private fun consume(consumer: MessageConsumer<Any>): Flux<Long> {
+        return getRecordsBatches(consumer)
+            .concatMap { batch -> handleBatch(batch, consumer) }
+            .doOnSubscribe { log.info("${consumer.getName()} receiver started") }
+            .doOnTerminate { log.info("${consumer.getName()} receiver terminated") }
             .doOnError { throwable -> log.error("Got exception while processing records", throwable) }
             .retryWhen(getRetrySettings())
     }
 
-    private fun getRecordsBatches(receiver: MessageConsumer<Any>): Flux<Flux<ConsumerRecord<String, Any?>>> {
+    private fun getRecordsBatches(consumer: MessageConsumer<Any>): Flux<Flux<ConsumerRecord<String, Any?>>> {
         return Flux.defer {
-            log.info("Starting ${receiver.getName()} receiver")
-            var flux = receiver.getReceiver().receiveAutoAck()
-            if (receiver.getDelaySeconds() != null) {
+            log.info("Starting ${consumer.getName()} consumer")
+            var flux = consumer.getReceiver().receiveAutoAck()
+            if (consumer.getDelaySeconds() != null) {
                 flux = flux.delayElements(Duration.ofSeconds(props.kafka.dltHandlingInterval))
             }
             flux
@@ -93,7 +104,12 @@ class KafkaConsumerLauncherDecorator(
             log.warn("Got empty value for record $record")
             Mono.just(EventConsumptionResult(EventConsumptionResult.EventConsumptionResultCode.FAILED))
         } else {
-            mono(observationRegistry.asContextElement()) { receiver.handle(record.value()!!) }
+            mono(observationRegistry.asContextElement()) {
+                receiver.handle(
+                    record.value()!!,
+                    EventMetadata(record.key() ?: "EMPTY", 0)
+                )
+            }
         }
     }
 

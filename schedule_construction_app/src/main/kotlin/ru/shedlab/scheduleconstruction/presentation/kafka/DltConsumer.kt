@@ -14,8 +14,7 @@ class DltConsumer(
     private val dltHandler: IEventHandler<DltEvent<Any>>,
     private val props: AppProps
 ) : MessageConsumer<DltEvent<Any>> {
-    override suspend fun handle(event: DltEvent<Any>):
-        EventConsumptionResult = dltHandler.handle(event, EventMetadata(processingAttempts = 0, key = event.key))
+    override suspend fun handle(event: DltEvent<Any>, metadata: EventMetadata) = dltHandler.handle(event, metadata)
 
     override fun getReceiver(): KafkaReceiver<String, DltEvent<Any>?> = dltReceiver
 

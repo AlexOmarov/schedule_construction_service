@@ -1,6 +1,7 @@
 package ru.shedlab.scheduleconstruction.infrastructure.kafka
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.micrometer.tracing.Tracer
 import io.opentelemetry.api.trace.SpanId
 import io.opentelemetry.api.trace.TraceId
 import kotlinx.coroutines.flow.first
@@ -24,6 +25,7 @@ class KafkaSenderDecorator(
     private val dltSender: KafkaSender<String, DltEvent<Any>>,
     private val mapper: ObjectMapper,
     private val props: AppProps,
+    private val tracer: Tracer
 ) {
     private val log = LoggerFactory.getLogger(KafkaSender::class.java)
     suspend fun <T> send(event: T, topic: String, sender: KafkaSender<String, T>, key: String): SenderResult<T> {
@@ -87,8 +89,14 @@ class KafkaSenderDecorator(
     private fun getTraceParentHeader(): String {
         val min = Random.nextLong(2L, Long.MAX_VALUE - 2)
         val max = Random.nextLong(min, Long.MAX_VALUE)
-        val traceId = TraceId.fromLongs(max, min)
-        val spanId = SpanId.fromLong(Random.nextLong())
+        var traceId = TraceId.fromLongs(max, min)
+        var spanId = SpanId.fromLong(Random.nextLong())
+
+        val traceContext = tracer.currentTraceContext().context()
+        if (traceContext != null) {
+            traceId = traceContext.traceId()
+            spanId = traceContext.spanId()
+        }
         return "00-$traceId-$spanId-01"
     }
 

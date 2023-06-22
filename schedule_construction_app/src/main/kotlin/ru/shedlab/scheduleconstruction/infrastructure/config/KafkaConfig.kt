@@ -61,15 +61,10 @@ class KafkaConfig(private val props: AppProps) {
     }
 
     @Bean
-    fun kafkaReactiveReceivers(
-        props: AppProps,
-        receiverSetups: List<MessageConsumer<out Any>>,
-        observationRegistry: ObservationRegistry
-    ): CompositeReactiveHealthContributor {
-        val launcher = KafkaConsumerLauncherDecorator(props, receiverSetups, observationRegistry)
+    fun kafkaReactiveReceivers(decorator: KafkaConsumerLauncherDecorator): CompositeReactiveHealthContributor {
         var handler = CompositeReactiveHealthContributor.fromMap(HashMap<String, ReactiveHealthIndicator>())
         if (props.kafka.consumingEnabled) {
-            handler = launcher.launchConsumers()
+            handler = decorator.launchConsumers()
         } else {
             logger.info("Kafka is disabled: $props")
         }
