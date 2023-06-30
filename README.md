@@ -19,7 +19,7 @@ Service for showing PoC solutions, patterns, technologies usage.
 * TLS for Rsocket
 * Serialization to hessian
 * R2dbc postgres with transaction support
-* DLT topic
+* Retry topic
 * Example of inner architecture
 * Scheduling with distributed locking
 * Caching

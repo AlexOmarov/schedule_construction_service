@@ -4,22 +4,22 @@ import org.springframework.stereotype.Service
 import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
 import ru.shedlab.scheduleconstruction.infrastructure.config.Props
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.EventConsumptionResult
-import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent
+import ru.shedlab.scheduleconstruction.presentation.kafka.RetryEvent
 import ru.shedlab.scheduleconstruction.presentation.kafka.StubEvent
 
 @Service
-class DltEventHandler(
+class RetryEventHandler(
     private val props: Props,
     private val stubHandler: IEventHandler<StubEvent>
-) : IEventHandler<DltEvent<Any>> {
-    override suspend fun handle(event: DltEvent<Any>, metadata: EventMetadata): EventConsumptionResult {
-        val result = if (event.payload == null || props.kafka.dltResendNumber <= event.processingAttempts) {
+) : IEventHandler<RetryEvent<Any>> {
+    override suspend fun handle(event: RetryEvent<Any>, metadata: EventMetadata): EventConsumptionResult {
+        val result = if (event.payload == null || props.kafka.retryAttempts <= event.attempts) {
             EventConsumptionResult(EventConsumptionResult.EventConsumptionResultCode.FAILED)
         } else {
             when (event.payloadType) {
-                DltEvent.PayloadType.STUB -> stubHandler.handle(
+                RetryEvent.PayloadType.STUB -> stubHandler.handle(
                     event.payload as StubEvent,
-                    EventMetadata(event.key, event.processingAttempts)
+                    EventMetadata(event.key, event.attempts)
                 )
             }
         }

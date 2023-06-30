@@ -7,6 +7,7 @@ import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.EventConsumptionResult
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.EventConsumptionResult.EventConsumptionResultCode.OK
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.KafkaSenderDecorator
+import ru.shedlab.scheduleconstruction.presentation.kafka.RetryEvent.PayloadType.STUB
 import ru.shedlab.scheduleconstruction.presentation.kafka.StubEvent
 import java.util.UUID
 
@@ -14,8 +15,10 @@ import java.util.UUID
 class StubEventHandler(
     private val stubService: StubService,
     sender: KafkaSenderDecorator
-) : AbstractEventHandlerWithDlt<StubEvent>(sender) {
+) : AbstractEventHandlerWithRetry<StubEvent>(sender) {
     private val logger = LoggerFactory.getLogger(StubEventHandler::class.java)
+    override suspend fun getPayloadType() = STUB
+
     override suspend fun handleEvent(event: StubEvent, metadata: EventMetadata): EventConsumptionResult {
         logger.info("Stub handle")
         stubService.getStub(UUID.fromString(event.id))

@@ -25,7 +25,7 @@ import org.testcontainers.utility.DockerImageName
 import reactor.kafka.sender.KafkaSender
 import ru.shedlab.scheduleconstruction.config.GrpcTestClient
 import ru.shedlab.scheduleconstruction.infrastructure.config.Props
-import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent
+import ru.shedlab.scheduleconstruction.presentation.kafka.RetryEvent
 
 @Testcontainers
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
@@ -59,7 +59,7 @@ class BaseIntegrationTest {
     // Spy beans
 
     @Autowired
-    lateinit var dltEventSender: KafkaSender<String, DltEvent<Any>>
+    lateinit var retryEventSender: KafkaSender<String, RetryEvent<Any>>
 
     @SpyBean
     lateinit var cacheManager: CacheManager

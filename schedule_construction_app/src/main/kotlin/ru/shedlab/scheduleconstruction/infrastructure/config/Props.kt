@@ -43,21 +43,24 @@ data class Props(
     data class KafkaProps(
         val brokers: String,
         val consumingEnabled: Boolean,
-        val dltEnabled: Boolean,
+        val retryEnabled: Boolean,
+        val retryInterval: Long,
+        val retryAttempts: Int,
+        val retryTopic: String,
         val stubConsumingEnabled: Boolean,
-        val retryAttempts: Long,
-        val retryPeriodSeconds: Long,
-        val retryJitter: Double,
+        val receiverRetry: ReceiverRetryProps,
         val groupId: String,
         val maxPollRecords: Int,
         val offsetResetConfig: String,
         val commitInterval: Long,
-        val dltHandlingInterval: Long,
-        val dltResendNumber: Int,
         val sender: SenderProps,
         val stubTopic: String,
-        val healthTimeoutMillis: Long,
-        val dltTopic: String
+        val healthTimeoutMillis: Long
+    )
+    data class ReceiverRetryProps(
+        val attempts: Long,
+        val periodSeconds: Long,
+        val jitter: Double,
     )
 
     data class SenderProps(

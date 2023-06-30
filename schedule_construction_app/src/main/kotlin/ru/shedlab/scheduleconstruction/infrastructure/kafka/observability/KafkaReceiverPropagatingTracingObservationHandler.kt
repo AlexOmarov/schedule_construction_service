@@ -9,7 +9,7 @@ import io.micrometer.tracing.propagation.Propagator
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.support.micrometer.KafkaRecordReceiverContext
 
-class KafkaReceiverPropagatingReceiverTracingObservationHandler(tracer: Tracer, propagator: Propagator) :
+class KafkaReceiverPropagatingTracingObservationHandler(tracer: Tracer, propagator: Propagator) :
     PropagatingReceiverTracingObservationHandler<ReceiverContext<ConsumerRecord<Any, Any>>>(tracer, propagator) {
     override fun tagSpan(context: ReceiverContext<ConsumerRecord<Any, Any>>, span: Span) {
         for (tag in context.highCardinalityKeyValues) {

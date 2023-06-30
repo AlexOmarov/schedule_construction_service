@@ -23,7 +23,7 @@ app:
   kafka:
     brokers: ${KAFKA_BROKERS:localhost:9092}
     stub-topic: ${KAFKA_STUB_TOPIC:stub}
-    dlt-topic: ${KAFKA_DLT_TOPIC:schedule_construction_service_dlt}
+    retry-topic: ${KAFKA_RETRY_TOPIC:schedule_construction_service_retry}
   scheduler:
     enabled: ${SCHEDULING_ENABLED:true}
     thread-pool-size: ${SCHEDULING_THREAD_POOL_SIZE:2} # increase if new scheds are coming to not make race conditions
@@ -119,23 +119,24 @@ grpc:
 
 kafka:
   consuming-enabled: true
-  dlt-enabled: true
+  retry-enabled: true
   sender:
     max-in-flight: 512
-  retry-attempts: 10
-  retry-period-seconds: 2
-  retry-jitter: 0.75
+  receiver-retry:
+    attempts: 10
+    period-seconds: 2
+    jitter: 0.75
   offset-reset-config: 'latest'
   brokers: '${app.kafka.brokers}'
   group-id: 'schedule-construction-service'
   stub-topic: '${app.kafka.stub-topic}'
-  dlt-topic: '${app.kafka.dlt-topic}'
+  retry-topic: '${app.kafka.retry-topic}'
   health-timeout-millis: 50
   stub-consuming-enabled: true
   max-poll-records: 5
   commit-interval: 5 # in seconds
-  dlt-handling-interval: 10 # in seconds
-  dlt-resend-number: 3
+  retry-interval: 10 # in seconds
+  retry-attempts: 3
 
 logging:
   config: classpath:logback/logback-spring.xml

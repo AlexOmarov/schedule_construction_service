@@ -25,7 +25,7 @@ import javax.annotation.PreDestroy
 @Component
 class KafkaConsumerLauncherDecorator(
     private val props: Props,
-    private val consumers: List<MessageConsumer<out Any>>,
+    private val consumers: List<IMessageConsumer<out Any>>,
     private val observationRegistry: ObservationRegistry
 ) {
     private val log = LoggerFactory.getLogger(KafkaConsumerLauncherDecorator::class.java)
@@ -46,12 +46,12 @@ class KafkaConsumerLauncherDecorator(
     private fun startConsumers(registry: MutableMap<String, ReactiveHealthIndicator>) {
         consumers.filter { it.enabled() }
             .forEach {
-                val disposable = consume(it as MessageConsumer<Any>).subscribe()
+                val disposable = consume(it as IMessageConsumer<Any>).subscribe()
                 registry[it.getName()] = KafkaReceiverHealthIndicator(disposable)
             }
     }
 
-    private fun consume(consumer: MessageConsumer<Any>): Flux<Long> {
+    private fun consume(consumer: IMessageConsumer<Any>): Flux<Long> {
         return getRecordsBatches(consumer)
             .concatMap { batch -> handleBatch(batch, consumer) }
             .doOnSubscribe { log.info("${consumer.getName()} receiver started") }
@@ -60,22 +60,22 @@ class KafkaConsumerLauncherDecorator(
             .retryWhen(getRetrySettings())
     }
 
-    private fun getRecordsBatches(consumer: MessageConsumer<Any>): Flux<Flux<ConsumerRecord<String, Any?>>> {
+    private fun getRecordsBatches(consumer: IMessageConsumer<Any>): Flux<Flux<ConsumerRecord<String, Any?>>> {
         return Flux.defer {
             log.info("Starting ${consumer.getName()} consumer")
             var flux = consumer.getReceiver().receiveAutoAck()
             if (consumer.getDelaySeconds() != null) {
-                flux = flux.delayElements(Duration.ofSeconds(props.kafka.dltHandlingInterval))
+                flux = flux.delayElements(Duration.ofSeconds(props.kafka.retryInterval))
             }
             flux
         }
     }
 
-    private fun handleBatch(records: Flux<ConsumerRecord<String, Any?>>, receiver: MessageConsumer<Any>): Mono<Long> {
+    private fun handleBatch(records: Flux<ConsumerRecord<String, Any?>>, receiver: IMessageConsumer<Any>): Mono<Long> {
         return records
             .groupBy { record -> record.partition() }
             .flatMap { partitionRecords ->
-                if (receiver.getExecutionStrategy() == MessageConsumer.ExecutionStrategy.SEQUENTIAL) {
+                if (receiver.getExecutionStrategy() == IMessageConsumer.ExecutionStrategy.SEQUENTIAL) {
                     // Process records within each partition sequentially
                     partitionRecords.concatMap { record -> handleRecord(record, receiver) }
                 } else {
@@ -92,13 +92,13 @@ class KafkaConsumerLauncherDecorator(
 
     private fun getRetrySettings(): Retry {
         return Retry
-            .backoff(props.kafka.retryAttempts, Duration.ofSeconds(props.kafka.retryPeriodSeconds))
-            .jitter(props.kafka.retryJitter)
+            .backoff(props.kafka.receiverRetry.attempts, Duration.ofSeconds(props.kafka.receiverRetry.periodSeconds))
+            .jitter(props.kafka.receiverRetry.jitter)
     }
 
     private fun handleRecord(
         record: ConsumerRecord<String, Any?>,
-        receiver: MessageConsumer<Any>
+        receiver: IMessageConsumer<Any>
     ): Mono<EventConsumptionResult> {
         val observation = KafkaListenerObservation.LISTENER_OBSERVATION.observation(
             null,

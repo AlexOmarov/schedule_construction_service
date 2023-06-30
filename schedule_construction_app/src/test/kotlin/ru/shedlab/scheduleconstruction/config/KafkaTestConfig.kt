@@ -33,7 +33,7 @@ class KafkaTestConfig(
         admin.createTopics(
             listOf(
                 NewTopic(props.kafka.stubTopic, 1, 1),
-                NewTopic(props.kafka.dltTopic, 1, 1),
+                NewTopic(props.kafka.retryTopic, 1, 1),
                 NewTopic(testTopic, 3, 1)
             )
         )

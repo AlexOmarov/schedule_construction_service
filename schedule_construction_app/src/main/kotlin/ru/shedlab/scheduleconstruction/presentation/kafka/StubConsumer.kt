@@ -1,19 +1,22 @@
 package ru.shedlab.scheduleconstruction.presentation.kafka
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Component
 import reactor.kafka.receiver.KafkaReceiver
 import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
 import ru.shedlab.scheduleconstruction.application.eventhandlers.StubEventHandler
 import ru.shedlab.scheduleconstruction.infrastructure.config.Props
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.EventConsumptionResult
-import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumer
+import ru.shedlab.scheduleconstruction.infrastructure.kafka.IMessageConsumer
+import ru.shedlab.scheduleconstruction.infrastructure.kafka.serde.stub.StubEventDeserializer
 
 @Component
 class StubConsumer(
-    private val receiver: KafkaReceiver<String, StubEvent?>,
+    mapper: ObjectMapper,
     private val handler: StubEventHandler,
     private val props: Props
-) : MessageConsumer<StubEvent> {
+) : AbstractMessageConsumer<StubEvent>(props) {
+    private val receiver = buildReceiver(StubEventDeserializer(mapper), props.kafka.stubTopic)
     override suspend fun handle(event: StubEvent, metadata: EventMetadata): EventConsumptionResult =
         handler.handle(event, metadata)
 
@@ -24,7 +27,7 @@ class StubConsumer(
     override fun getName(): String = "STUB_RECEIVER"
 
     override fun getDelaySeconds() = null
-    override fun getExecutionStrategy(): MessageConsumer.ExecutionStrategy {
-        return MessageConsumer.ExecutionStrategy.SEQUENTIAL
+    override fun getExecutionStrategy(): IMessageConsumer.ExecutionStrategy {
+        return IMessageConsumer.ExecutionStrategy.SEQUENTIAL
     }
 }

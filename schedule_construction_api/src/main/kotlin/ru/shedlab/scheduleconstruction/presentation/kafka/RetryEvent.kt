@@ -1,13 +1,11 @@
 package ru.shedlab.scheduleconstruction.presentation.kafka
 
-data class DltEvent<T>(
+data class RetryEvent<T>(
     val payload: T?,
     val key: String,
     val payloadType: PayloadType,
     val data: String,
-    var processingAttempts: Int
+    var attempts: Int
 ) {
-    enum class PayloadType {
-        STUB
-    }
+    enum class PayloadType { STUB }
 }
