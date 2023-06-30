@@ -8,7 +8,7 @@ app:
   database:
     port: '7003'
   kafka:
-    brokers: localhost:6003
+    brokers: localhost:5002
 
 kafka:
   consuming-enabled: true

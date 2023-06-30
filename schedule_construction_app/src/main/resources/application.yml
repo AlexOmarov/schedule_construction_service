@@ -42,7 +42,7 @@ management:
     livenessState:
       enabled: true
     r2dbc:
-      enabled: false
+      enabled: true
   endpoints:
     web:
       exposure:
@@ -51,7 +51,7 @@ management:
     health:
       group:
         readiness:
-          include: database,kafkaReactiveReceivers,grpcChannel
+          include: r2dbc,kafkaReactiveReceivers,grpcChannel
       show-details: always
       show-components: always
       probes:
