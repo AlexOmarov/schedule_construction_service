@@ -11,7 +11,7 @@ class DltEventSerializer(private val mapper: ObjectMapper) : Serializer<DltEvent
         return try {
             mapper.writeValueAsBytes(data)
         } catch (e: Exception) {
-            throw SerializationException("Error when serializing ConversionUpdateDltEvent to byte[]", e)
+            throw SerializationException("Error when serializing DltEvent to byte[]", e)
         }
     }
 }

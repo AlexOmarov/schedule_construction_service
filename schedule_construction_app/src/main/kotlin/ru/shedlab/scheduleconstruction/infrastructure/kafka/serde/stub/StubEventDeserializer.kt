@@ -17,7 +17,7 @@ class StubEventDeserializer(
         return try {
             mapper.readValue(stringData, StubEvent::class.java)
         } catch (e: Exception) {
-            log.error("Got exception $e while trying to parse ConversionUpdateEvent from data $data")
+            log.error("Got exception $e while trying to parse StubEvent from data $data")
             return null
         }
     }

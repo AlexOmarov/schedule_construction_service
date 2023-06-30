@@ -98,7 +98,7 @@ class BaseIntegrationTest {
     // this method for add custom logic after test for controllers
     // override it in controller if you want
     fun cleanAfterEach() {
-        dbClient.sql { "SELECT * from cpa_conversions_db.shedlock" }.then().block()
+        dbClient.sql { "SELECT * from shedlock" }.then().block()
     }
 
     fun cleanAfterAll() {

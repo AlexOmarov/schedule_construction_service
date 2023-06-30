@@ -55,14 +55,14 @@ Also, there should be several side systems. Following is the list of that with r
     - password: POSTGRES_PASSWORD (schedule_construction_service)
 - Kafka (confluent 7.3, kafka 3.3):
     - brokers: KAFKA_BROKERS (localhost:9092)
-    - conversion-update-topic: CONVERSION_UPDATE_TOPIC (conversion_update)
+    - stub-topic: STUB_TOPIC (stub)
 - Other systems:
     - other-service-host: OTHER_SERVICE_HOST (localhost:9090)
   
 В стандартной конфигурации сервис держит открытым для http соединений порт 8080 и порт 9090 для grpc соединений.
 Настройку можно изменить, добавив `GRPC_PORT` и `HTTP_PORT` системные переменные.
 
-При развертке на прод контуре должно быть развернуто не менее двух экземпляров сервиса, и CONVERSION_UPDATE_TOPIC
+При развертке на прод контуре должно быть развернуто не менее двух экземпляров сервиса, и STUB_TOPIC
 очередь должна иметь не менее двух партиций. Время жизни сообщений - два месяца или более.
 
 `Liveness` и `readiness` API доступны по `actuator/health/liveness` и `actuator/health/readiness` путям.  

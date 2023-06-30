@@ -22,7 +22,7 @@ import ru.shedlab.scheduleconstruction.presentation.kafka.StubEvent
 class KafkaTestConfig(
     private val props: Props
 ) {
-    @Value("\${kafka.cpa-conversions-test-topic}")
+    @Value("\${kafka.test-topic}")
     lateinit var testTopic: String
 
     @Bean

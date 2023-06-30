@@ -127,7 +127,7 @@ kafka:
   retry-jitter: 0.75
   offset-reset-config: 'latest'
   brokers: '${app.kafka.brokers}'
-  group-id: 'cpa-conversions-service'
+  group-id: 'schedule-construction-service'
   stub-topic: '${app.kafka.stub-topic}'
   dlt-topic: '${app.kafka.dlt-topic}'
   health-timeout-millis: 50

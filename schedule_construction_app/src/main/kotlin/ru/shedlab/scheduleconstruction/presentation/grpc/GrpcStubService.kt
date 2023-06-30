@@ -11,7 +11,7 @@ class GrpcStubService(private val stubService: StubService) : StubServiceGrpcKt.
     private val logger = LoggerFactory.getLogger(GrpcStubService::class.java)
 
     override suspend fun getStub(request: StubRequest): StubResponse {
-        logger.info("Getting getConversion method with request $request")
+        logger.info("Getting getStub method with request $request")
         stubService.getStub(UUID.fromString(request.id))
         return super.getStub(request)
     }

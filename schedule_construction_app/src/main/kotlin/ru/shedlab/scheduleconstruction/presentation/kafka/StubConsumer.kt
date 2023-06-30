@@ -10,14 +10,14 @@ import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumer
 
 @Component
 class StubConsumer(
-    private val conversionReceiver: KafkaReceiver<String, StubEvent?>,
-    private val conversionUpdateHandler: StubEventHandler,
+    private val receiver: KafkaReceiver<String, StubEvent?>,
+    private val handler: StubEventHandler,
     private val props: Props
 ) : MessageConsumer<StubEvent> {
     override suspend fun handle(event: StubEvent, metadata: EventMetadata): EventConsumptionResult =
-        conversionUpdateHandler.handle(event, metadata)
+        handler.handle(event, metadata)
 
-    override fun getReceiver(): KafkaReceiver<String, StubEvent?> = conversionReceiver
+    override fun getReceiver(): KafkaReceiver<String, StubEvent?> = receiver
 
     override fun enabled(): Boolean = props.kafka.stubConsumingEnabled
 

@@ -11,7 +11,7 @@ class StubEventSerializer(private val mapper: ObjectMapper) : Serializer<StubEve
         return try {
             mapper.writeValueAsBytes(data)
         } catch (e: Exception) {
-            throw SerializationException("Error when serializing ConversionUpdateEvent to byte[]", e)
+            throw SerializationException("Error when serializing Stub to byte[]", e)
         }
     }
 }
