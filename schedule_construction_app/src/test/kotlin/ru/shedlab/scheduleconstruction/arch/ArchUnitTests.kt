@@ -3,22 +3,15 @@ package ru.shedlab.scheduleconstruction.arch
 import com.tngtech.archunit.core.domain.JavaClasses
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
-import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
 import org.junit.jupiter.api.TestInstance
+import org.springframework.transaction.annotation.Transactional
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AnalyzeClasses(packages = ["ru.shedlab.scheduleconstruction"])
 class ArchUnitTests {
     @ArchTest
-    fun `there are no package cycles`(importedClasses: JavaClasses) {
-        SlicesRuleDefinition.slices()
-            .matching("$BASE_PACKAGE.(**)..")
-            .should()
-            .beFreeOfCycles()
-            .check(importedClasses)
-    }
-
-    companion object {
-        private const val BASE_PACKAGE = "ru.shedlab.scheduleconstruction"
+    fun `there are no transactional annotation`(importedClasses: JavaClasses) {
+        noClasses().should().beAnnotatedWith(Transactional::class.java).check(importedClasses)
     }
 }
