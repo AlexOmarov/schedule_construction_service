@@ -14,7 +14,7 @@ import java.net.URI
 import java.time.Duration
 
 @Configuration
-class RSocketConfig(private val props: AppProps) {
+class RSocketConfig(private val props: Props) {
 
     @Bean
     fun messageHandler(): RSocketMessageHandler {

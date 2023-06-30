@@ -4,9 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import java.time.Duration
 
 @ConfigurationProperties("")
-data class AppProps(
+data class Props(
     val messages: MessagesProps,
-    val app: ApplicationProps,
+    val app: AppProps,
     val kafka: KafkaProps,
     val cache: CacheProps
 ) {
@@ -24,7 +24,8 @@ data class AppProps(
         val lockMaxDuration: Duration
     )
 
-    data class ApplicationProps(
+    data class AppProps(
+        val instance: String,
         val scheduler: SchedulingProps,
         val rsocket: RsocketProps
     )

@@ -19,7 +19,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar
     defaultLockAtLeastFor = "\${app.scheduler.min-lock}"
 )
 @ConditionalOnProperty(name = ["app.scheduler.enabled"], havingValue = "true")
-class SchedulingConfig(private val props: AppProps) : SchedulingConfigurer {
+class SchedulingConfig(private val props: Props) : SchedulingConfigurer {
     override fun configureTasks(taskRegistrar: ScheduledTaskRegistrar) {
         val threadPoolTaskScheduler = ThreadPoolTaskScheduler()
 

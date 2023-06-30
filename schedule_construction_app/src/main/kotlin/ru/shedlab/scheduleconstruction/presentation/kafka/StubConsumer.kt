@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component
 import reactor.kafka.receiver.KafkaReceiver
 import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
 import ru.shedlab.scheduleconstruction.application.eventhandlers.StubEventHandler
-import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.infrastructure.config.Props
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.EventConsumptionResult
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumer
 
@@ -12,7 +12,7 @@ import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumer
 class StubConsumer(
     private val conversionReceiver: KafkaReceiver<String, StubEvent?>,
     private val conversionUpdateHandler: StubEventHandler,
-    private val props: AppProps
+    private val props: Props
 ) : MessageConsumer<StubEvent> {
     override suspend fun handle(event: StubEvent, metadata: EventMetadata): EventConsumptionResult =
         conversionUpdateHandler.handle(event, metadata)

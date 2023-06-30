@@ -23,7 +23,7 @@ protobuf-kotlin="3.22.2"
 grpc-protobuf="1.53.0"
 
 # Spring
-spring-boot="3.0.4"
+spring-boot="3.1.1"
 spring-kafka="3.0.6"
 spring-boot-dm="1.1.0"
 spring-grpc="2.14.0.RELEASE"
@@ -31,7 +31,7 @@ spring-grpc="2.14.0.RELEASE"
 # Micrometer
 micrometer-otel="1.0.3"
 micrometer-reactor="1.0.5"
-micrometer-tracing="1.0.4"
+micrometer-tracing="1.1.2"
 otel-zipkin="1.19.0"
 
 # OpenApi
@@ -60,6 +60,7 @@ junit="5.9.0"
 testcontainers="1.17.6"
 mockito="4.1.0"
 awaitility="4.2.0"
+archunit="1.0.1"
 
 # Client APIs
 
@@ -147,6 +148,7 @@ testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref="testc
 mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 reactor-test = { module = "io.projectreactor:reactor-test", version.ref="reactor" }
 awaitility = { module = "org.awaitility:awaitility-kotlin", version.ref = "awaitility" }
+archunit = { module = "com.tngtech.archunit:archunit-junit5", version.ref="archunit" }
 
 # Logging
 logstash-logback = { module="net.logstash.logback:logstash-logback-encoder", version.ref="logstash-logback" }

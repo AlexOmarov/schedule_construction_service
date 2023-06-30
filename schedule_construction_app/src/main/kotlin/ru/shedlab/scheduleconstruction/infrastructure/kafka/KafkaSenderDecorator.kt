@@ -16,7 +16,7 @@ import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderRecord
 import reactor.kafka.sender.SenderResult
 import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
-import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.infrastructure.config.Props
 import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent
 import kotlin.random.Random
 
@@ -24,7 +24,7 @@ import kotlin.random.Random
 class KafkaSenderDecorator(
     private val dltSender: KafkaSender<String, DltEvent<Any>>,
     private val mapper: ObjectMapper,
-    private val props: AppProps,
+    private val props: Props,
     private val tracer: Tracer
 ) {
     private val log = LoggerFactory.getLogger(KafkaSender::class.java)

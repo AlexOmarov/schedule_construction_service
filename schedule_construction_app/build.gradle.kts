@@ -74,6 +74,7 @@ dependencies {
     testImplementation(libs.mockito)
 
     testImplementation(libs.reactor.test)
+    testImplementation(libs.archunit)
     testImplementation(libs.awaitility)
     testImplementation(libs.testcontainers.junit)
     testImplementation(libs.testcontainers.postgres)

@@ -1,7 +1,6 @@
 package ru.shedlab.scheduleconstruction.infrastructure.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.micrometer.observation.ObservationRegistry
 import io.micrometer.tracing.Tracer
 import io.micrometer.tracing.propagation.Propagator
 import org.apache.kafka.clients.admin.AdminClient
@@ -24,7 +23,6 @@ import reactor.kafka.receiver.ReceiverOptions
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderOptions
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.KafkaConsumerLauncherDecorator
-import ru.shedlab.scheduleconstruction.infrastructure.kafka.MessageConsumer
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.observability.KafkaClusterHealthIndicator
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.observability.KafkaReceiverPropagatingReceiverTracingObservationHandler
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.serde.dlt.DltEventDeserializer
@@ -35,7 +33,7 @@ import ru.shedlab.scheduleconstruction.presentation.kafka.StubEvent
 import java.time.Duration
 
 @Configuration
-class KafkaConfig(private val props: AppProps) {
+class KafkaConfig(private val props: Props) {
     private val logger = LoggerFactory.getLogger(KafkaConfig::class.java)
 
     @Bean

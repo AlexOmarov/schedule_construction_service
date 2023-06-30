@@ -2,14 +2,14 @@ package ru.shedlab.scheduleconstruction.application.eventhandlers
 
 import org.springframework.stereotype.Service
 import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
-import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.infrastructure.config.Props
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.EventConsumptionResult
 import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent
 import ru.shedlab.scheduleconstruction.presentation.kafka.StubEvent
 
 @Service
 class DltEventHandler(
-    private val props: AppProps,
+    private val props: Props,
     private val stubHandler: IEventHandler<StubEvent>
 ) : IEventHandler<DltEvent<Any>> {
     override suspend fun handle(event: DltEvent<Any>, metadata: EventMetadata): EventConsumptionResult {

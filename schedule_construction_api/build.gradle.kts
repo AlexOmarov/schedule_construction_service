@@ -11,6 +11,8 @@ plugins {
 }
 
 dependencies {
+    detektPlugins(libs.detekt.ktlint)
+
     implementation(libs.spring.starter.webflux)
     implementation(libs.grpc.kotlin)
     implementation(libs.grpc.java)

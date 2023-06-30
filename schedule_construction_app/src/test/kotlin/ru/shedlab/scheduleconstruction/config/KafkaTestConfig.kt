@@ -13,20 +13,20 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderOptions
-import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.infrastructure.config.Props
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.serde.stub.StubEventSerializer
 import ru.shedlab.scheduleconstruction.presentation.kafka.StubEvent
 
 @TestConfiguration
 @AutoConfigureObservability
 class KafkaTestConfig(
-    private val props: AppProps
+    private val props: Props
 ) {
     @Value("\${kafka.cpa-conversions-test-topic}")
     lateinit var testTopic: String
 
     @Bean
-    fun adminClient(props: AppProps): AdminClient {
+    fun adminClient(props: Props): AdminClient {
         val admin = AdminClient.create(
             mapOf(Pair(BOOTSTRAP_SERVERS_CONFIG, props.kafka.brokers))
         )

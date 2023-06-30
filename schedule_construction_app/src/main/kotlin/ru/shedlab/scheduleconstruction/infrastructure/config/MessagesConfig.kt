@@ -10,7 +10,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
 class MessagesConfig {
 
     @Bean
-    fun messageSource(props: AppProps): MessageSource {
+    fun messageSource(props: Props): MessageSource {
         val messageSource = ReloadableResourceBundleMessageSource()
         messageSource.setBasenames(props.messages.basename)
         messageSource.setDefaultEncoding(props.messages.encoding)

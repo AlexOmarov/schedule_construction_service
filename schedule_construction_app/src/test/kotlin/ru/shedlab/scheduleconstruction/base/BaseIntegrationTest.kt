@@ -24,7 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
 import reactor.kafka.sender.KafkaSender
 import ru.shedlab.scheduleconstruction.config.GrpcTestClient
-import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.infrastructure.config.Props
 import ru.shedlab.scheduleconstruction.presentation.kafka.DltEvent
 
 @Testcontainers
@@ -46,7 +46,7 @@ class BaseIntegrationTest {
     lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    lateinit var props: AppProps
+    lateinit var props: Props
 
     @Autowired
     lateinit var dbClient: DatabaseClient

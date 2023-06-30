@@ -15,15 +15,16 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
 import ru.shedlab.scheduleconstruction.application.dto.EventMetadata
-import ru.shedlab.scheduleconstruction.infrastructure.config.AppProps
+import ru.shedlab.scheduleconstruction.infrastructure.config.Props
 import ru.shedlab.scheduleconstruction.infrastructure.kafka.observability.KafkaReceiverHealthIndicator
 import java.time.Duration
 import java.util.UUID
+import java.util.function.Supplier
 import javax.annotation.PreDestroy
 
 @Component
 class KafkaConsumerLauncherDecorator(
-    private val props: AppProps,
+    private val props: Props,
     private val consumers: List<MessageConsumer<out Any>>,
     private val observationRegistry: ObservationRegistry
 ) {
@@ -99,28 +100,29 @@ class KafkaConsumerLauncherDecorator(
         record: ConsumerRecord<String, Any?>,
         receiver: MessageConsumer<Any>
     ): Mono<EventConsumptionResult> {
-        startEventObservation(record, receiver)
-        return if (record.value() == null) {
-            log.warn("Got empty value for record $record")
-            Mono.just(EventConsumptionResult(EventConsumptionResult.EventConsumptionResultCode.FAILED))
-        } else {
-            mono(observationRegistry.asContextElement()) {
-                receiver.handle(
-                    record.value()!!,
-                    EventMetadata(record.key() ?: "EMPTY", 0)
-                )
-            }
-        }
-    }
-
-    private fun startEventObservation(rec: ConsumerRecord<String, Any?>, receiver: MessageConsumer<Any>) {
         val observation = KafkaListenerObservation.LISTENER_OBSERVATION.observation(
             null,
             KafkaListenerObservation.DefaultKafkaListenerObservationConvention.INSTANCE,
-            { KafkaRecordReceiverContext(rec, receiver.getName()) { UUID.randomUUID().toString() } },
+            { KafkaRecordReceiverContext(record, receiver.getName()) { UUID.randomUUID().toString() } },
             observationRegistry
         )
-        observation.start()
-        observation.openScope()
+
+        return observation.observe(
+            Supplier {
+                return@Supplier if (record.value() == null) {
+                    log.warn("Got empty value for record $record")
+                    Mono.just(EventConsumptionResult(EventConsumptionResult.EventConsumptionResultCode.FAILED))
+                } else {
+                    mono(observationRegistry.asContextElement()) {
+                        receiver.handle(record.value()!!, EventMetadata(record.key() ?: "EMPTY_KEY", zeroAttempts))
+                    }
+                }
+            }
+        )!!
+    }
+
+    companion object {
+        const val emptyKey = "EMPTY_KEY"
+        const val zeroAttempts = 0
     }
 }

@@ -12,7 +12,7 @@ import javax.cache.CacheManager
 
 @Configuration
 @EnableCaching
-class CacheConfig(private val props: AppProps) : JCacheManagerCustomizer {
+class CacheConfig(private val props: Props) : JCacheManagerCustomizer {
 
     override fun customize(cacheManager: CacheManager) {
         cacheManager.createCache("stubs", getConfig(props.cache.defaultTime, props.cache.defaultHeapSize))

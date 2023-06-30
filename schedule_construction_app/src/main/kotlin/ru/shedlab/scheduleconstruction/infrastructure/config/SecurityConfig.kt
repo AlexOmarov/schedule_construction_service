@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import java.security.SecureRandom
 
 @Configuration
-class SecurityConfig(val props: AppProps) {
+class SecurityConfig(val props: Props) {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
