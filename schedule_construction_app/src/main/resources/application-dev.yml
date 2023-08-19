@@ -5,8 +5,6 @@ app:
       other-service-host: localhost:12000
   http:
     port: 11012
-  database:
-    port: '7003'
   kafka:
     brokers: localhost:5002
 
