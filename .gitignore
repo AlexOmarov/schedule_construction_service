@@ -10,3 +10,4 @@
 /out
 /logback.groovy
 /cache
+*/application-dev.yml
